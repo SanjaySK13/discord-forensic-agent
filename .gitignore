@@ -1,0 +1,32 @@
+# Credentials & Secrets
+config.json
+.env
+*.key
+*.pem
+
+# Large Data & Message Cache Files (Contains private chat logs & large payloads)
+cache_*.json
+discord_messages.json
+author_embeddings_cache.npz
+*.txt
+!requirements.txt
+
+# Python runtime
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Editor & OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+

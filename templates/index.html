@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Confession Author Attribution & AI Forensics</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Marked.js for Gemini Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            discord: {
+              blurple: '#5865F2',
+              green: '#57F287',
+              yellow: '#FEE75C',
+              fuchsia: '#EB459E',
+              red: '#ED4245',
+              dark: '#313338',
+              darker: '#2B2D31',
+              darkest: '#1E1F22'
+            },
+            gemini: {
+              purple: '#7c3aed',
+              light: '#a855f7',
+              glow: '#c084fc'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #1e1f22;
+      color: #dbdee1;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #4e5058;
+      border-radius: 3px;
+    }
+    .prose-dossier h3 {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-top: 1.1rem;
+      margin-bottom: 0.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 0.25rem;
+    }
+    .prose-dossier h4 {
+      color: #c084fc;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-top: 0.8rem;
+      margin-bottom: 0.25rem;
+    }
+    .prose-dossier p {
+      font-size: 0.825rem;
+      line-height: 1.55;
+      color: #dbdee1;
+      margin-bottom: 0.6rem;
+    }
+    .prose-dossier ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      font-size: 0.825rem;
+      margin-bottom: 0.6rem;
+      color: #b5bac1;
+    }
+    .prose-dossier li {
+      margin-bottom: 0.25rem;
+    }
+    .prose-dossier strong {
+      color: #ffffff;
+    }
+    .prose-dossier code {
+      background-color: #1e1f22;
+      color: #c084fc;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.3rem;
+      font-size: 0.8em;
+      border: 1px solid #35373c;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Header -->
+  <header class="bg-[#2b2d31] border-b border-[#35373c] px-6 py-4 flex items-center justify-between shadow-md">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5865F2] to-[#7c3aed] flex items-center justify-center text-white shadow-lg shadow-[#5865F2]/30">
+        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+          Discord Stylometric Forensics
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-[#5865F2]/20 to-[#7c3aed]/20 text-[#a855f7] border border-[#a855f7]/40 flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3 h-3"></i> Gemini 3.5 AI
+          </span>
+        </h1>
+        <p class="text-xs text-[#949ba4]">5-Layer Mathematical Attribution & Deep Cognitive Motive Profiler</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div id="geminiBadge" class="hidden sm:flex items-center gap-1.5 text-xs bg-[#1e1f22] border border-[#a855f7]/30 px-3 py-1.5 rounded-lg text-[#c084fc]">
+        <span class="w-2 h-2 rounded-full bg-[#a855f7] animate-pulse"></span>
+        <span id="geminiStatusText">Gemini 3.5 Flash Active</span>
+      </div>
+      <div id="statusBadge" class="flex items-center gap-2 text-xs bg-[#1e1f22] border border-[#35373c] px-3 py-1.5 rounded-lg text-[#949ba4]">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="statusText">Checking local cache...</span>
+      </div>
+      <button 
+        type="button" 
+        id="btnSyncLatest" 
+        onclick="syncLatestMessages()" 
+        title="Sync new messages sent in Discord up to this second"
+        class="flex items-center gap-1.5 text-xs bg-[#1e1f22] hover:bg-[#2b2d31] border border-[#5865F2]/40 hover:border-[#5865F2] px-3 py-1.5 rounded-lg text-white font-medium transition shadow-sm"
+      >
+        <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5 text-[#5865F2]"></i>
+        <span id="syncBtnText">Sync Latest</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Parameters & Confession (5 Cols) -->
+    <div class="lg:col-span-5 space-y-5">
+      <div class="bg-[#2b2d31] border border-[#35373c] rounded-2xl p-5 shadow-xl space-y-4">
+        
+        <div class="border-b border-[#35373c] pb-3 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-white flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-[#5865F2]"></i>
+            Investigation Parameters
+          </h2>
+          <button type="button" id="btnFillSample" class="text-xs text-[#5865F2] hover:text-[#7983f5] font-medium transition flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Insert Sample
+          </button>
+        </div>
+
+        <form id="predictionForm" class="space-y-4">
+
+          <!-- Channel ID Input -->
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] mb-1.5 flex items-center gap-1.5">
+              <i data-lucide="hash" class="w-3.5 h-3.5 text-[#949ba4]"></i> Channel ID
+            </label>
+            <input 
+              type="text" 
+              id="channelId" 
+              name="channel_id" 
+              value="1516697578107043850" 
+              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#80848e] transition outline-none font-mono"
+              placeholder="e.g. 1516697578107043850"
+              required
+            />
+          </div>
+
+          <!-- Message Count Input -->
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] mb-1.5 flex items-center justify-between">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#949ba4]"></i> Number of Messages
+              </span>
+              <span id="limitDisplay" class="text-xs text-[#5865F2] font-mono">10,000 messages</span>
+            </label>
+            <input 
+              type="number" 
+              id="messageLimit" 
+              name="limit" 
+              value="10000" 
+              min="50" 
+              max="100000" 
+              step="500"
+              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#80848e] transition outline-none font-mono"
+              required
+            />
+            <div class="flex items-center gap-2 mt-1.5 text-[11px] text-[#949ba4]">
+              <span>Presets:</span>
+              <button type="button" onclick="document.getElementById('messageLimit').value=5000; document.getElementById('limitDisplay').textContent='5,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">5k</button>
+              <button type="button" onclick="document.getElementById('messageLimit').value=10000; document.getElementById('limitDisplay').textContent='10,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">10k</button>
+              <button type="button" onclick="document.getElementById('messageLimit').value=20000; document.getElementById('limitDisplay').textContent='20,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">20k</button>
+              <button type="button" onclick="document.getElementById('messageLimit').value=50000; document.getElementById('limitDisplay').textContent='50,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">50k</button>
+              <button type="button" onclick="document.getElementById('messageLimit').value=100000; document.getElementById('limitDisplay').textContent='100,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">100k</button>
+            </div>
+          </div>
+
+          <!-- Confession Textarea -->
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] mb-1.5 flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#949ba4]"></i> Confession to Find / Predict
+            </label>
+            <textarea 
+              id="confessionText" 
+              name="confession" 
+              rows="6"
+              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] rounded-xl p-3 text-sm text-white placeholder-[#80848e] transition outline-none resize-none scrollbar-thin leading-relaxed"
+              placeholder="Paste the anonymous confession message here..."
+            ></textarea>
+          </div>
+
+          <!-- API Keys & Credentials Section -->
+          <div class="pt-1">
+            <button type="button" id="btnToggleSettings" class="text-xs text-[#5865F2] hover:text-[#7983f5] font-medium flex items-center justify-between w-full transition py-1">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                <span id="tokenToggleTitle">Credentials (Discord & Gemini Keys)</span>
+              </span>
+              <div class="flex items-center gap-1.5">
+                <span id="geminiSavedBadge" class="hidden text-[10px] bg-[#a855f7]/20 text-[#c084fc] border border-[#a855f7]/30 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#a855f7]"></span> Gemini Key
+                </span>
+                <span id="tokenSavedBadge" class="hidden text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Discord Token
+                </span>
+                <i data-lucide="chevron-down" id="settingsArrow" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+              </div>
+            </button>
+            <div id="settingsPanel" class="mt-2.5 p-3.5 rounded-xl bg-[#1e1f22] border border-[#35373c] space-y-3">
+              <div class="text-[11px] text-[#949ba4] leading-relaxed">
+                Both your <strong class="text-white">Discord Bot Token</strong> and <strong class="text-[#c084fc]">Gemini API Key</strong> are saved locally on disk and loaded automatically on every run.
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-[#b5bac1] mb-1">Google Gemini API Key</label>
+                <input 
+                  type="password" 
+                  id="geminiApiKey" 
+                  class="w-full bg-[#2b2d31] border border-[#35373c] focus:border-[#a855f7] rounded-lg px-3 py-2 text-xs text-white placeholder-[#80848e] outline-none font-mono"
+                  placeholder="Paste Gemini API key to save locally..."
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-[#b5bac1] mb-1">Discord Bot or Account Token</label>
+                <input 
+                  type="password" 
+                  id="discordToken" 
+                  class="w-full bg-[#2b2d31] border border-[#35373c] focus:border-[#5865F2] rounded-lg px-3 py-2 text-xs text-white placeholder-[#80848e] outline-none font-mono"
+                  placeholder="Paste Discord token once to save it locally..."
+                />
+              </div>
+              <div class="flex items-center gap-2 pt-0.5">
+                <input type="checkbox" id="forceScrape" class="rounded bg-[#2b2d31] border-[#35373c] text-[#5865F2] focus:ring-0">
+                <label for="forceScrape" class="text-xs text-[#949ba4] cursor-pointer">Force fresh re-scrape from Discord (instead of appending)</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            id="btnPredict" 
+            class="w-full bg-gradient-to-r from-[#5865F2] to-[#7c3aed] hover:from-[#4752c4] hover:to-[#6d28d9] text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-[#5865F2]/25 transition flex items-center justify-center gap-2"
+          >
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            <span>Run Forensic Author Prediction & AI Profiling</span>
+          </button>
+
+          <!-- Behavioral Analyst Jump Button -->
+          <button 
+            type="button" 
+            id="btnJumpBehavior" 
+            onclick="scrollToBehaviorAnalyst()" 
+            class="w-full bg-[#1e1f22] hover:bg-[#2b2d31] text-[#f59e0b] hover:text-[#fbbf24] border border-[#f59e0b]/40 font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs shadow-md"
+          >
+            <i data-lucide="flame" class="w-4 h-4 text-[#f59e0b]"></i>
+            <span>Behavioral Analyst & 3-Line Roast ↓</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Server Knowledge Card -->
+      <div class="bg-[#2b2d31]/60 border border-[#35373c] rounded-2xl p-4 text-xs text-[#949ba4] space-y-2">
+        <div class="font-semibold text-white flex items-center gap-1.5">
+          <i data-lucide="database" class="w-3.5 h-3.5 text-[#a855f7]"></i>
+          Active Server Memory:
+        </div>
+        <p class="text-[11px] leading-relaxed">
+          The AI Bot is preloaded with <strong class="text-white" id="memoryTotalMsgs">113,806 human messages</strong> across <strong class="text-white" id="memoryTotalAuthors">790 unique server authors</strong>. You can chat directly with it in the right panel anytime!
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Chat & Forensic Dashboard (7 Cols) -->
+    <div class="lg:col-span-7 space-y-4">
+      
+      <!-- Top Navigation Tabs -->
+      <div class="flex items-center justify-between border-b border-[#35373c] pb-2.5">
+        <div class="flex items-center gap-2">
+          <button 
+            type="button" 
+            id="tabBtnChat" 
+            onclick="switchTab('chat')" 
+            class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition bg-[#7c3aed] text-white shadow-lg shadow-[#7c3aed]/25"
+          >
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+            <span>Talk with AI Bot</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          </button>
+          <button 
+            type="button" 
+            id="tabBtnAnalysis" 
+            onclick="switchTab('analysis')" 
+            class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#949ba4] hover:text-white bg-[#1e1f22] border border-[#35373c] transition"
+          >
+            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+            <span>Attribution & Math Dossier</span>
+            <span id="analysisBadge" class="hidden text-[10px] bg-[#5865F2]/20 text-[#7983f5] border border-[#5865F2]/30 px-1.5 py-0.2 rounded-full">Ready</span>
+          </button>
+        </div>
+        <div class="text-[11px] text-[#949ba4] font-mono hidden sm:block">
+          Channel: 1516697578107043850
+        </div>
+      </div>
+
+      <!-- ================= TAB 1: TALK WITH AI BOT (ACTIVE BY DEFAULT) ================= -->
+      <div id="tabChatView" class="space-y-4">
+        <div class="bg-[#2b2d31] border border-[#a855f7]/30 rounded-2xl p-5 shadow-2xl space-y-4">
+          
+          <!-- Bot Header -->
+          <div class="flex items-center justify-between border-b border-[#35373c] pb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7c3aed] to-[#c084fc] flex items-center justify-center text-white shadow-md font-bold text-base">
+                🤖
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  Antigravity Forensic AI Bot
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium">Online</span>
+                </h3>
+                <p class="text-[11px] text-[#949ba4]">Powered by Gemini 3.5 Flash • Live Access to <span id="chatStatusMsgs" class="text-white font-semibold">113,806</span> Messages (<span id="chatStatusAuthors" class="text-white font-semibold">790</span> Members)</p>
+              </div>
+            </div>
+            <button type="button" onclick="clearInterrogationHistory()" class="text-xs text-[#949ba4] hover:text-white transition flex items-center gap-1">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear Chat
+            </button>
+          </div>
+
+          <!-- Quick Starter Prompts -->
+          <div class="space-y-1.5">
+            <span class="text-[11px] font-semibold text-[#949ba4] uppercase tracking-wider block">Suggested Topics:</span>
+            <div class="flex flex-wrap gap-1.5 text-[11px]">
+              <button type="button" onclick="askQuickPrompt('Who are the most active users in this Discord server and what are their vibes?')" class="px-2.5 py-1 rounded-full bg-[#1e1f22] hover:bg-[#35373c] text-white border border-[#35373c] transition flex items-center gap-1">
+                🗣️ Most Active Users
+              </button>
+              <button type="button" onclick="askQuickPrompt('Analyze the communication habits of top members like @napkinwastaken, @vasoolraja_mbbs, and Aadi')" class="px-2.5 py-1 rounded-full bg-[#1e1f22] hover:bg-[#35373c] text-[#c084fc] border border-[#a855f7]/30 transition flex items-center gap-1">
+                👥 Member Communication Styles
+              </button>
+              <button type="button" onclick="askQuickPrompt('Analyze phrases like \'Im writing this on behalf of my frd too cos he too felt like that lol~~\'. How do people use proxy shields to deflect accountability?')" class="px-2.5 py-1 rounded-full bg-[#1e1f22] hover:bg-[#35373c] text-[#7983f5] border border-[#5865F2]/30 transition flex items-center gap-1">
+                🛡️ Check Proxy Shield
+              </button>
+              <button type="button" onclick="askQuickPrompt('How can you mathematically tell if someone is trying to frame someone else in an anonymous confession?')" class="px-2.5 py-1 rounded-full bg-[#1e1f22] hover:bg-[#35373c] text-amber-400 border border-amber-500/30 transition flex items-center gap-1">
+                🎭 Frame-Job Detection
+              </button>
+            </div>
+          </div>
+
+          <!-- Chat Messages Container -->
+          <div id="chatMessages" class="space-y-3 min-h-[280px] max-h-[460px] overflow-y-auto p-3.5 bg-[#1e1f22] rounded-xl border border-[#35373c] scrollbar-thin text-xs">
+            <div class="flex items-start gap-2.5 text-[#949ba4]">
+              <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7c3aed] to-[#c084fc] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm">AI</div>
+              <div class="space-y-1.5 max-w-[90%] bg-[#24212e]/80 p-3.5 rounded-xl border border-[#a855f7]/30 text-[#dbdee1]">
+                <p class="text-white font-semibold text-sm">Hey! I am ready to talk.</p>
+                <p class="leading-relaxed text-xs">
+                  I have analyzed all <strong id="chatGreetingMsgs" class="text-white">113,806 messages</strong> and <strong id="chatGreetingAuthors" class="text-white">790 members</strong> from the server archive. You can ask me to analyze any member's typing habits, explain past conversations, investigate slang patterns, or paste any confession text on the left to cross-examine suspects.
+                </p>
+                <p class="text-[11px] text-[#c084fc] font-medium pt-1">What would you like to investigate or discuss?</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <form id="chatForm" class="flex gap-2" onsubmit="sendChatMessage(event)">
+            <input 
+              type="text" 
+              id="chatInput" 
+              placeholder="Ask anything or talk with the bot..."
+              class="flex-1 bg-[#1e1f22] border border-[#35373c] focus:border-[#a855f7] rounded-xl px-4 py-3 text-sm text-white placeholder-[#80848e] outline-none transition"
+              autocomplete="off"
+            />
+            <button 
+              type="submit" 
+              id="btnSendChat" 
+              class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#7c3aed] to-[#a855f7] hover:from-[#6d28d9] hover:to-[#9333ea] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-[#7c3aed]/25 flex-shrink-0"
+            >
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Send</span>
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- ================= TAB 2: ATTRIBUTION & DOSSIER VIEW ================= -->
+      <div id="tabAnalysisView" class="hidden space-y-5">
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="bg-[#2b2d31] border border-[#35373c] border-dashed rounded-2xl p-12 text-center flex flex-col items-center justify-center h-full min-h-[420px] text-[#949ba4] space-y-3">
+          <div class="w-16 h-16 rounded-2xl bg-[#1e1f22] flex items-center justify-center text-[#5865F2] shadow-inner">
+            <i data-lucide="fingerprint" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-base font-semibold text-white">No Prediction Executed Yet</h3>
+          <p class="text-xs max-w-sm">Enter a confession on the left and click "Run Forensic Author Prediction" to calculate the 5-layer mathematical attribution and generate the AI dossier.</p>
+          <button type="button" onclick="document.getElementById('btnFillSample').click();" class="mt-2 px-3 py-1.5 rounded-lg bg-[#5865F2]/20 hover:bg-[#5865F2]/30 text-[#7983f5] border border-[#5865F2]/40 text-xs font-medium transition">
+            Insert Sample Confession
+          </button>
+        </div>
+
+        <!-- Loading & Real-time Progress State -->
+        <div id="loadingState" class="hidden bg-[#2b2d31] border border-[#35373c] rounded-2xl p-8 text-center flex flex-col items-center justify-center min-h-[440px] space-y-6">
+          <div class="relative w-16 h-16">
+            <div class="w-16 h-16 rounded-full border-4 border-[#35373c] border-t-[#5865F2] animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-[#5865F2]">
+              <i data-lucide="brain-circuit" class="w-7 h-7"></i>
+            </div>
+          </div>
+          
+          <div class="w-full max-w-md space-y-3">
+            <div class="flex items-center justify-between text-xs font-semibold">
+              <span id="progressStageTitle" class="text-white flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#5865F2] animate-pulse"></span>
+                <span id="progressStageName">Analyzing Corpus</span>
+              </span>
+              <span id="progressPctText" class="text-[#5865F2] font-mono text-sm">0%</span>
+            </div>
+
+            <!-- Real-time Progress Bar -->
+            <div class="w-full bg-[#1e1f22] border border-[#35373c] rounded-full h-3.5 p-0.5 overflow-hidden shadow-inner">
+              <div id="progressBarFill" class="h-full bg-gradient-to-r from-[#5865F2] via-[#7983f5] to-emerald-400 rounded-full transition-all duration-300 shadow-lg shadow-[#5865F2]/40" style="width: 0%"></div>
+            </div>
+
+            <p id="loadingMsg" class="text-xs text-[#949ba4] font-mono transition-all">Initializing forensic pipeline...</p>
+          </div>
+
+          <!-- 4 Step Pipeline Indicators -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-lg pt-2 text-[11px]">
+            <div id="stepScrape" class="p-2.5 rounded-xl bg-[#1e1f22] border border-[#35373c] text-[#949ba4] flex flex-col items-center gap-1 transition">
+              <i data-lucide="download-cloud" class="w-4 h-4"></i>
+              <span>1. Discord Fetch</span>
+            </div>
+            <div id="stepToken" class="p-2.5 rounded-xl bg-[#1e1f22] border border-[#35373c] text-[#949ba4] flex flex-col items-center gap-1 transition">
+              <i data-lucide="binary" class="w-4 h-4"></i>
+              <span>2. Tokenization</span>
+            </div>
+            <div id="stepEmbed" class="p-2.5 rounded-xl bg-[#1e1f22] border border-[#35373c] text-[#949ba4] flex flex-col items-center gap-1 transition">
+              <i data-lucide="cpu" class="w-4 h-4"></i>
+              <span>3. AI Embeddings</span>
+            </div>
+            <div id="stepBayes" class="p-2.5 rounded-xl bg-[#1e1f22] border border-[#35373c] text-[#949ba4] flex flex-col items-center gap-1 transition">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>4. Attribution</span>
+            </div>
+          </div>
+
+          <button type="button" id="btnCancelScrape" onclick="cancelPrediction()" class="text-xs text-[#949ba4] hover:text-rose-400 transition flex items-center gap-1 pt-2">
+            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Cancel / Reset View
+          </button>
+        </div>
+
+        <!-- Results View -->
+        <div id="resultsView" class="hidden space-y-5">
+          
+          <!-- Notice Banner if needed -->
+          <div id="noticeBanner" class="hidden p-3 rounded-2xl bg-[#5865F2]/10 border border-[#5865F2]/30 text-xs text-[#7983f5] flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 flex-shrink-0 text-[#5865F2]"></i>
+            <span id="noticeText"></span>
+          </div>
+
+          <!-- Summary Stats Banner -->
+          <div class="bg-gradient-to-r from-[#2b2d31] to-[#313338] border border-[#35373c] rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-[#949ba4] font-semibold flex items-center gap-2">
+                <span>Attribution Complete</span>
+                <span id="cachePill" class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium">Cached</span>
+              </div>
+              <div class="text-sm font-bold text-white flex items-center gap-2 mt-0.5">
+                <span>Analyzed <span id="statMsgs" class="text-[#5865F2]">0</span> messages across <span id="statAuthors" class="text-[#5865F2]">0</span> members</span>
+              </div>
+              <div id="timeSpanDisplay" class="text-xs text-[#949ba4] mt-1.5 flex items-center gap-1.5 font-mono">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-[#5865F2]"></i>
+                <span id="statTimeSpan" class="text-[#b5bac1]">Calculating time range...</span>
+              </div>
+            </div>
+            <div class="text-left md:text-right border-t md:border-t-0 pt-2 md:pt-0 border-[#35373c]">
+              <div class="text-xs text-[#949ba4]">Top Suspect Identified</div>
+              <div id="topSuspectName" class="text-sm font-bold text-emerald-400">Athimethavi</div>
+            </div>
+          </div>
+
+          <!-- AI Forensic Dossier Section (Gemini 3.5 Flash) -->
+          <div id="aiDossierContainer" class="bg-gradient-to-br from-[#2b2d31] via-[#24212e] to-[#2b2d31] border border-[#a855f7]/40 rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-[#a855f7]/20 pb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7c3aed] to-[#c084fc] flex items-center justify-center text-white shadow-md">
+                  <i data-lucide="cpu" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    Gemini Forensic Intelligence Dossier
+                    <span class="text-[10px] bg-[#a855f7]/20 text-[#c084fc] border border-[#a855f7]/40 px-2 py-0.5 rounded-full">3.5 Flash</span>
+                  </h3>
+                  <p class="text-[11px] text-[#949ba4]">Motive profiling, proxy shield deconstruction & frame-job analysis</p>
+                </div>
+              </div>
+              <button type="button" id="btnRefreshDossier" onclick="generateDossier()" class="text-xs px-2.5 py-1 rounded-lg bg-[#a855f7]/20 hover:bg-[#a855f7]/30 text-[#c084fc] border border-[#a855f7]/30 font-medium transition flex items-center gap-1.5">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Re-Analyze
+              </button>
+            </div>
+
+            <!-- Dossier Loading Indicator -->
+            <div id="dossierLoading" class="py-8 flex flex-col items-center justify-center text-center space-y-3">
+              <div class="w-8 h-8 rounded-full border-2 border-[#a855f7]/30 border-t-[#a855f7] animate-spin"></div>
+              <div class="text-xs text-[#c084fc] font-medium animate-pulse">Consulting Gemini 3.5 Flash for Motive & Frame-Job Analysis...</div>
+            </div>
+
+            <!-- Dossier Content Box -->
+            <div id="dossierContent" class="hidden prose-dossier max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
+              <!-- Rendered by Marked.js -->
+            </div>
+          </div>
+
+          <!-- Top 3 Suspect Cards -->
+          <div class="space-y-3" id="suspectCardsContainer">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Evidence Quotes Section -->
+          <div class="bg-[#2b2d31] border border-[#35373c] rounded-2xl p-5 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-[#35373c] pb-3">
+              <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                <i data-lucide="quote" class="w-4 h-4 text-[#5865F2]"></i>
+                Side-By-Side Evidence Quotes
+              </h3>
+              <span class="text-xs text-[#949ba4]" id="evidenceAuthorLabel">Showing #1 Suspect</span>
+            </div>
+            <div id="evidenceQuotesList" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
+              <!-- Quotes populated here -->
+            </div>
+          </div>
+
+          <!-- Full Roster Table (Collapsible) -->
+          <div class="bg-[#2b2d31] border border-[#35373c] rounded-2xl p-4">
+            <button type="button" id="btnToggleAllRankings" class="w-full flex items-center justify-between text-xs text-[#949ba4] hover:text-white font-semibold transition">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-[#5865F2]"></i>
+                View All Candidate Scores (<span id="totalCandidatesCount">45</span> members)
+              </span>
+              <i data-lucide="chevron-down" id="allRankingsArrow" class="w-4 h-4 transition-transform duration-200"></i>
+            </button>
+            <div id="allRankingsTableWrapper" class="hidden mt-4 overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="border-b border-[#35373c] text-[#949ba4]">
+                    <th class="py-2 px-3">Rank</th>
+                    <th class="py-2 px-3">Member</th>
+                    <th class="py-2 px-3">Messages</th>
+                    <th class="py-2 px-3">Burrows' Delta</th>
+                    <th class="py-2 px-3">N-Gram Cosine</th>
+                    <th class="py-2 px-3">Zipfian Surprisal</th>
+                    <th class="py-2 px-3">AI Embedding</th>
+                    <th class="py-2 px-3 text-right">Posterior Prob</th>
+                  </tr>
+                </thead>
+                <tbody id="allRankingsTbody" class="divide-y divide-[#35373c]">
+                  <!-- Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= PART 2: BEHAVIORAL ANALYST & 3-LINE ROAST ================= -->
+  <section id="behavioralAnalystSection" class="max-w-7xl w-full mx-auto p-6 pt-0 space-y-6">
+    
+    <!-- Section Divider with Glowing Badge -->
+    <div class="relative flex items-center justify-center my-8">
+      <div class="border-t border-[#35373c] w-full"></div>
+      <div class="absolute bg-[#1e1f22] px-5 py-1.5 text-xs font-bold uppercase tracking-widest text-[#f59e0b] border border-[#f59e0b]/40 rounded-full flex items-center gap-2 shadow-xl">
+        <i data-lucide="flame" class="w-4 h-4 text-[#f59e0b]"></i>
+        <span>Part 2: Member Behavioral Analyst & 3-Line Roast</span>
+        <i data-lucide="sparkles" class="w-4 h-4 text-[#c084fc]"></i>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column of Part 2: Input Parameters (5 Cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-[#2b2d31] border border-[#f59e0b]/30 rounded-2xl p-5 shadow-2xl space-y-4">
+          
+          <div class="border-b border-[#35373c] pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <span class="p-1 rounded-lg bg-amber-500/20 text-[#f59e0b]">
+                <i data-lucide="flame" class="w-4 h-4"></i>
+              </span>
+              Target Member Investigation
+            </h2>
+            <p class="text-xs text-[#949ba4] mt-1">Select or type any server member's name and choose how many past messages to inspect.</p>
+          </div>
+
+          <form id="behaviorForm" onsubmit="runBehaviorAnalysis(event)" class="space-y-4">
+            <!-- Member Selection -->
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] flex items-center justify-between">
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="user" class="w-3.5 h-3.5 text-[#f59e0b]"></i> Select Member to Roast & Analyze
+                </span>
+                <span class="text-[11px] text-[#22c55e] flex items-center gap-1">
+                  <i data-lucide="shield-check" class="w-3 h-3"></i> Unique @handle matching
+                </span>
+              </label>
+              
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="targetMemberInput" 
+                  list="memberDatalist"
+                  placeholder="Type @username or display name (e.g. @vasoolraja_mbbs, @napkinwastaken)..." 
+                  class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#80848e] transition outline-none font-medium"
+                  oninput="onTargetMemberInputChange(this.value)"
+                  onchange="onTargetMemberInputChange(this.value)"
+                  required
+                />
+                <datalist id="memberDatalist">
+                  <!-- Dynamically populated from /api/members (exactly 1 entry per member) -->
+                </datalist>
+              </div>
+
+              <!-- Active Member Status Card (Dynamically updated) -->
+              <div id="targetMemberStatusCard" class="bg-[#1e1f22]/90 border border-amber-500/30 rounded-xl p-2.5 text-xs flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span id="targetStatusIcon" class="w-2 h-2 rounded-full bg-[#f59e0b] animate-ping"></span>
+                  <span id="targetStatusText" class="text-[#dbdee1]">Select a member above or choose from active members below:</span>
+                </div>
+                <span id="targetStatusCount" class="text-xs font-mono font-bold text-[#f59e0b]"></span>
+              </div>
+              
+              <!-- Quick Select Active Members Chips -->
+              <div class="space-y-1">
+                <div class="text-[#949ba4] text-[11px] flex items-center justify-between font-medium">
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="zap" class="w-3 h-3 text-[#f59e0b]"></i> Active Server Members:
+                  </span>
+                  <span class="text-[10px] text-[#80848e]">Click to select</span>
+                </div>
+                <div id="quickMemberChips" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto scrollbar-thin pr-1">
+                  <!-- Populated dynamically via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Message Depth / Limit Control -->
+            <div class="bg-[#1e1f22]/70 border border-[#35373c] rounded-xl p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label class="text-xs font-semibold uppercase tracking-wider text-[#b5bac1] flex items-center gap-1.5">
+                    <i data-lucide="history" class="w-3.5 h-3.5 text-[#f59e0b]"></i> Messages Sample Size
+                  </label>
+                  <p id="sampleSizeNotice" class="text-[10px] text-[#949ba4] mt-0.5">How many past messages to inspect for behavioral patterns.</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <input 
+                    type="text" 
+                    id="behaviorLimitNumber" 
+                    value="500" 
+                    class="w-20 bg-[#2b2d31] border border-[#35373c] focus:border-[#f59e0b] rounded-lg px-2 py-1 text-xs text-center text-[#f59e0b] font-mono font-bold outline-none"
+                    oninput="syncLimitFromNumber(this.value)"
+                  />
+                  <span class="text-[11px] text-[#949ba4]">msgs</span>
+                </div>
+              </div>
+
+              <!-- Range Slider -->
+              <input 
+                type="range" 
+                id="behaviorLimitRange" 
+                min="20" 
+                max="5000" 
+                step="20" 
+                value="500" 
+                class="w-full accent-[#f59e0b] cursor-pointer"
+                oninput="syncLimitFromRange(this.value)"
+              />
+
+              <!-- Quick Presets -->
+              <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span class="text-[10px] text-[#949ba4] uppercase font-bold mr-1">Presets:</span>
+                <button type="button" onclick="setPresetLimit(50)" class="px-2 py-0.5 rounded bg-[#2b2d31] hover:bg-[#35373c] text-[#dbdee1] text-[10px] font-mono border border-[#35373c] transition">50</button>
+                <button type="button" onclick="setPresetLimit(200)" class="px-2 py-0.5 rounded bg-[#2b2d31] hover:bg-[#35373c] text-[#dbdee1] text-[10px] font-mono border border-[#35373c] transition">200</button>
+                <button type="button" onclick="setPresetLimit(500)" class="px-2 py-0.5 rounded bg-[#2b2d31] hover:bg-[#35373c] text-[#dbdee1] text-[10px] font-mono border border-[#35373c] transition">500</button>
+                <button type="button" onclick="setPresetLimit(1000)" class="px-2 py-0.5 rounded bg-[#2b2d31] hover:bg-[#35373c] text-[#dbdee1] text-[10px] font-mono border border-[#35373c] transition">1,000</button>
+                <button type="button" onclick="setPresetLimit(2500)" class="px-2 py-0.5 rounded bg-[#2b2d31] hover:bg-[#35373c] text-[#dbdee1] text-[10px] font-mono border border-[#35373c] transition">2,500</button>
+                <button type="button" id="btnPresetAll" onclick="setPresetAll()" class="px-2.5 py-0.5 rounded bg-[#f59e0b]/20 hover:bg-[#f59e0b]/30 text-[#f59e0b] text-[10px] font-mono font-bold border border-[#f59e0b]/40 transition flex items-center gap-1">
+                  <i data-lucide="infinity" class="w-3 h-3"></i> ALL Messages
+                </button>
+              </div>
+
+              <!-- Limit explanation warning (if limit exceeds user's available msgs) -->
+              <div id="sampleExceedNotice" class="hidden text-[11px] text-amber-300/90 bg-amber-500/10 border border-amber-500/20 rounded-lg p-2 flex items-start gap-1.5">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5"></i>
+                <span id="sampleExceedNoticeText">This member currently has fewer messages in the local archive than the requested limit. Gemini will analyze all available messages, or you can hunt older messages below!</span>
+              </div>
+            </div>
+
+            <!-- Targeted History Fetcher -->
+            <div class="bg-[#1e1f22]/60 border border-[#38bdf8]/30 rounded-xl p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-white flex items-center gap-1.5">
+                  <i data-lucide="cloud-download" class="w-3.5 h-3.5 text-[#38bdf8]"></i> Need More History for This Member?
+                </span>
+                <span class="text-[10px] text-[#38bdf8] font-mono">Live Discord Scraper</span>
+              </div>
+              <p class="text-[11px] text-[#949ba4] leading-relaxed">
+                Paginates Discord channel history backwards specifically accumulating older messages sent by this member.
+              </p>
+              <div class="flex items-center gap-2 pt-0.5">
+                <select id="fetchMoreUserTargetCount" class="bg-[#2b2d31] border border-[#35373c] text-white text-xs rounded-lg px-2.5 py-2 outline-none font-mono">
+                  <option value="100">+100 msgs (Fast, ~15s)</option>
+                  <option value="250" selected>+250 msgs (Recommended)</option>
+                  <option value="500">+500 msgs (Deep)</option>
+                  <option value="1000">+1,000 msgs (Exhaustive)</option>
+                </select>
+                <button 
+                  type="button" 
+                  id="btnFetchMoreUserMsgs" 
+                  onclick="fetchMoreUserMessages()" 
+                  class="flex-1 bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-[#0369a1] hover:to-[#075985] text-white text-xs font-bold py-2 px-3 rounded-lg transition flex items-center justify-center gap-1.5 shadow-md shadow-sky-900/30"
+                >
+                  <i data-lucide="download" id="fetchMoreIcon" class="w-3.5 h-3.5"></i>
+                  <span id="fetchMoreBtnText">Hunt Older Messages from Discord</span>
+                </button>
+              </div>
+
+              <!-- Real-Time Live Progress & Counter Card -->
+              <div id="liveScrapeProgressCard" class="hidden bg-[#1e1f22] border border-[#38bdf8]/60 rounded-xl p-3 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-[#38bdf8] animate-ping"></span>
+                    <span id="liveScrapeTitle">Scraping Discord History Live...</span>
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <span id="liveFoundBadge" class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold text-[11px] border border-emerald-500/30">
+                      +0 found
+                    </span>
+                    <button type="button" onclick="cancelUserScrape()" class="text-[10px] text-rose-400 hover:text-white px-1.5 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/30 border border-rose-500/30 transition">
+                      Stop & Save
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Animated Progress Bar -->
+                <div class="w-full bg-[#2b2d31] rounded-full h-2 overflow-hidden border border-[#35373c]">
+                  <div id="scrapeProgressBar" class="bg-gradient-to-r from-[#38bdf8] to-[#0284c7] h-2 rounded-full transition-all duration-300 w-0"></div>
+                </div>
+
+                <!-- Dynamic Real-Time Status Text -->
+                <div class="flex items-center justify-between text-[11px] text-[#949ba4] font-mono">
+                  <span id="scrapeStatusText" class="truncate max-w-[80%]">Connecting to Discord API...</span>
+                  <span id="scrapePercentText" class="font-bold text-[#38bdf8]">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analyze & Roast Button -->
+            <button 
+              type="submit" 
+              id="btnRunBehavior" 
+              class="w-full bg-gradient-to-r from-[#f59e0b] via-[#ea580c] to-[#dc2626] hover:from-[#d97706] hover:to-[#b91c1c] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-[#ea580c]/25 transition flex items-center justify-center gap-2 text-sm"
+            >
+              <i data-lucide="flame" class="w-4 h-4"></i>
+              <span>Analyze Behavior & Roast Member</span>
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- Right Column of Part 2: Results (7 Cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        
+        <!-- Initial Placeholder State -->
+        <div id="behaviorEmptyState" class="bg-[#2b2d31] border border-[#35373c] border-dashed rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[360px] text-[#949ba4] space-y-3">
+          <div class="w-16 h-16 rounded-2xl bg-[#1e1f22] flex items-center justify-center text-[#f59e0b] shadow-inner">
+            <i data-lucide="user-search" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-base font-semibold text-white">No Member Analyzed Yet</h3>
+          <p class="text-xs max-w-sm">Pick a member on the left and click "Analyze Behavior & Roast Member" to reveal their psychological profile and generate a lethal 3-line roast.</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="behaviorLoadingState" class="hidden bg-[#2b2d31] border border-[#f59e0b]/40 rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[360px] space-y-4">
+          <div class="relative w-16 h-16">
+            <div class="w-16 h-16 rounded-full border-4 border-[#35373c] border-t-[#f59e0b] animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-[#f59e0b]">
+              <i data-lucide="flame" class="w-7 h-7"></i>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <div id="behaviorLoadingTitle" class="text-sm font-bold text-white animate-pulse">Reading Member's Past Discord Messages...</div>
+            <p id="behaviorLoadingSub" class="text-xs text-[#949ba4]">Diagnosing communication patterns and cooking up the 3-line roast...</p>
+          </div>
+        </div>
+
+        <!-- Results View -->
+        <div id="behaviorResultView" class="hidden space-y-4">
+          
+          <!-- Member Header Card -->
+          <div class="bg-gradient-to-r from-[#2b2d31] via-[#2f2738] to-[#2b2d31] border border-[#35373c] rounded-2xl p-4 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3">
+              <div id="behaviorAvatar" class="w-11 h-11 rounded-xl bg-[#1e1f22] border border-[#f59e0b]/40 flex items-center justify-center text-lg font-black text-[#f59e0b] shadow-md">
+                A
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-[#f59e0b] border border-amber-500/30">Target Profiled</span>
+                  <span id="behaviorAnalyzedCount" class="text-xs text-[#949ba4] font-mono">100 msgs analyzed</span>
+                </div>
+                <h3 id="behaviorTargetName" class="text-base font-bold text-white mt-0.5">Aadi <span id="behaviorTargetUser" class="text-xs text-[#949ba4] font-normal">(@aadiplays)</span></h3>
+              </div>
+            </div>
+            <div class="text-right">
+              <div id="behaviorTotalCount" class="text-lg font-black text-white font-mono">5,137</div>
+              <div class="text-[10px] text-[#949ba4] uppercase tracking-wider">Total in Archive</div>
+            </div>
+          </div>
+
+          <!-- 🔥 THE 3-LINE SAVAGE ROAST (HERO COMPONENT) -->
+          <div class="bg-gradient-to-br from-[#2a1b18] via-[#1f161b] to-[#2a1818] border-2 border-[#ea580c]/60 rounded-2xl p-5 shadow-2xl space-y-3 relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 text-amber-500/10 pointer-events-none">
+              <i data-lucide="flame" class="w-32 h-32"></i>
+            </div>
+            <div class="flex items-center justify-between border-b border-[#ea580c]/30 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🔥</span>
+                <h4 class="text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
+                  3-Line Savage Roast
+                  <span class="text-[10px] bg-red-500/20 text-red-300 border border-red-500/40 px-2 py-0.5 rounded-full font-bold">Uncensored</span>
+                </h4>
+              </div>
+              <button type="button" id="btnCopyRoast" onclick="copyRoastText()" class="text-xs px-2.5 py-1 rounded-lg bg-[#ea580c]/20 hover:bg-[#ea580c]/30 text-[#f97316] border border-[#ea580c]/40 font-medium transition flex items-center gap-1 shadow-sm">
+                <i data-lucide="copy" class="w-3 h-3"></i> <span>Copy Roast</span>
+              </button>
+            </div>
+
+            <!-- Roast Lines Container -->
+            <div id="roastLinesContainer" class="space-y-2 pt-1 font-mono text-xs">
+              <!-- 3 Lines rendered here -->
+            </div>
+          </div>
+
+          <!-- 🧠 DEEP BEHAVIORAL & PSYCHOLOGICAL PROFILE CARD -->
+          <div class="bg-[#2b2d31] border border-[#35373c] rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center gap-2 border-b border-[#35373c] pb-2.5">
+              <i data-lucide="brain" class="w-4 h-4 text-[#c084fc]"></i>
+              <h4 class="text-sm font-bold text-white">Linguistic & Psychological Profile</h4>
+            </div>
+            <div id="behaviorProfileMarkdown" class="prose-dossier max-h-[380px] overflow-y-auto pr-2 scrollbar-thin text-xs">
+              <!-- Rendered via marked.js -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <script>
+    const SAMPLE_CONFESSION = `Okay so I honestly gotta say this yo
+Im writing this on behalf of my frd too cos he too felt like that lol~~
+
+Some people here gotta be the biggest pick me fr 🫩
+Bro js acts and tries so hard to look nonchalant in general chat and it is lowkey blatant icl 😭✌️
+
+And also yeah Obviously drools around voice channels all night like do u not have an exam tomorrow or shi 😂
+
+Being in a server with people acting like this js icks me and honestly it's js cringe atp🫩🙏
+Ts people should stop acting fake for real get a life 🤡`;
+
+    let latestPredictionData = null;
+    let latestConfession = "";
+    let interrogationHistory = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      checkServerStatus();
+      loadMemberList();
+
+      // Prefill Sample Button
+      document.getElementById("btnFillSample").addEventListener("click", () => {
+        document.getElementById("confessionText").value = SAMPLE_CONFESSION;
+      });
+
+      // Update message count display live
+      document.getElementById("messageLimit").addEventListener("input", (e) => {
+        document.getElementById("limitDisplay").textContent = `${Number(e.target.value).toLocaleString()} messages`;
+      });
+
+      // Settings dropdown toggle
+      const btnToggleSettings = document.getElementById("btnToggleSettings");
+      const settingsPanel = document.getElementById("settingsPanel");
+      const settingsArrow = document.getElementById("settingsArrow");
+      btnToggleSettings.addEventListener("click", () => {
+        const isHidden = settingsPanel.classList.toggle("hidden");
+        settingsArrow.style.transform = isHidden ? "rotate(0deg)" : "rotate(90deg)";
+      });
+
+      // All rankings dropdown toggle
+      const btnToggleAll = document.getElementById("btnToggleAllRankings");
+      const tableWrapper = document.getElementById("allRankingsTableWrapper");
+      const allArrow = document.getElementById("allRankingsArrow");
+      btnToggleAll.addEventListener("click", () => {
+        const isHidden = tableWrapper.classList.toggle("hidden");
+        allArrow.style.transform = isHidden ? "rotate(0deg)" : "rotate(180deg)";
+      });
+
+      // Form submission
+      document.getElementById("predictionForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await runPrediction();
+      });
+    });
+
+    function switchTab(tab) {
+      const tabChat = document.getElementById("tabChatView");
+      const tabAnalysis = document.getElementById("tabAnalysisView");
+      const btnChat = document.getElementById("tabBtnChat");
+      const btnAnalysis = document.getElementById("tabBtnAnalysis");
+
+      if (tab === "chat") {
+        tabChat.classList.remove("hidden");
+        tabAnalysis.classList.add("hidden");
+        btnChat.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition bg-[#7c3aed] text-white shadow-lg shadow-[#7c3aed]/25";
+        btnAnalysis.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#949ba4] hover:text-white bg-[#1e1f22] border border-[#35373c] transition";
+      } else {
+        tabChat.classList.add("hidden");
+        tabAnalysis.classList.remove("hidden");
+        btnAnalysis.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25";
+        btnChat.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#949ba4] hover:text-white bg-[#1e1f22] border border-[#35373c] transition";
+      }
+      lucide.createIcons();
+    }
+
+    async function checkServerStatus() {
+      try {
+        const res = await fetch("/api/status");
+        const data = await res.json();
+        const statusText = document.getElementById("statusText");
+        if (data.cache_available && data.cached_info) {
+          const totMsgs = data.cached_info.total_messages.toLocaleString();
+          const totAuthors = data.cached_info.total_authors.toLocaleString();
+          const tw = data.cached_info.time_window ? ` • ${data.cached_info.time_window}` : "";
+          statusText.textContent = `Cache: ${totMsgs} msgs (${totAuthors} authors)${tw}`;
+          
+          const elChatStatusMsgs = document.getElementById("chatStatusMsgs");
+          if (elChatStatusMsgs) elChatStatusMsgs.textContent = totMsgs;
+          const elChatStatusAuthors = document.getElementById("chatStatusAuthors");
+          if (elChatStatusAuthors) elChatStatusAuthors.textContent = totAuthors;
+          const elGreetingMsgs = document.getElementById("chatGreetingMsgs");
+          if (elGreetingMsgs) elGreetingMsgs.textContent = `${totMsgs} messages`;
+          const elGreetingAuthors = document.getElementById("chatGreetingAuthors");
+          if (elGreetingAuthors) elGreetingAuthors.textContent = `${totAuthors} members`;
+          const elMemoryMsgs = document.getElementById("memoryTotalMsgs");
+          if (elMemoryMsgs) elMemoryMsgs.textContent = `${totMsgs} human messages`;
+          const elMemoryAuthors = document.getElementById("memoryTotalAuthors");
+          if (elMemoryAuthors) elMemoryAuthors.textContent = `${totAuthors} unique server authors`;
+        } else {
+          statusText.textContent = "Ready (Live scrape enabled)";
+        }
+
+        if (data.has_token) {
+          const badge = document.getElementById("tokenSavedBadge");
+          if (badge) badge.classList.remove("hidden");
+          const input = document.getElementById("discordToken");
+          if (input) {
+            input.placeholder = `Discord token saved (${data.token_preview || '••••••••'}). Leave blank to keep.`;
+          }
+        }
+
+        if (data.has_gemini) {
+          const gBadge = document.getElementById("geminiSavedBadge");
+          if (gBadge) gBadge.classList.remove("hidden");
+          const gHeader = document.getElementById("geminiBadge");
+          if (gHeader) gHeader.classList.remove("hidden");
+          const gInput = document.getElementById("geminiApiKey");
+          if (gInput) {
+            gInput.placeholder = `Gemini key saved (${data.gemini_preview || '••••••••'}). Leave blank to keep.`;
+          }
+        }
+      } catch (err) {
+        document.getElementById("statusText").textContent = "Local Server Active";
+      }
+    }
+
+    let progressPollTimer = null;
+
+    function cancelPrediction() {
+      if (progressPollTimer) clearInterval(progressPollTimer);
+      document.getElementById("loadingState").classList.add("hidden");
+      if (latestPredictionData) {
+        document.getElementById("resultsView").classList.remove("hidden");
+      } else {
+        document.getElementById("emptyState").classList.remove("hidden");
+      }
+    }
+
+    function updateProgressUI(pData) {
+      if (!pData) return;
+      const pct = pData.pct || 0;
+      document.getElementById("progressBarFill").style.width = pct + "%";
+      document.getElementById("progressPctText").textContent = pct + "%";
+      if (pData.message) {
+        document.getElementById("loadingMsg").textContent = pData.message;
+      }
+      if (pData.stage) {
+        const stageNames = {
+          "initializing": "Preparing Corpus",
+          "scraping": "Scraping Discord REST API",
+          "merging": "Merging & Deduplicating Cache",
+          "tokenizing": "Forensic Tokenization",
+          "stylometrics": "Burrows' Delta & N-Grams",
+          "embedding": "Neural Vector Embeddings",
+          "attributing": "Bayesian Posterior Calibration",
+          "complete": "Attribution Complete"
+        };
+        document.getElementById("progressStageName").textContent = stageNames[pData.stage] || pData.stage;
+      }
+
+      const sScrape = document.getElementById("stepScrape");
+      const sToken = document.getElementById("stepToken");
+      const sEmbed = document.getElementById("stepEmbed");
+      const sBayes = document.getElementById("stepBayes");
+
+      function setStepActive(el, active, complete) {
+        if (!el) return;
+        if (complete) {
+          el.className = "p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 flex flex-col items-center gap-1 transition shadow-sm";
+        } else if (active) {
+          el.className = "p-2.5 rounded-xl bg-[#5865F2]/20 border border-[#5865F2] text-white flex flex-col items-center gap-1 transition shadow-sm animate-pulse";
+        } else {
+          el.className = "p-2.5 rounded-xl bg-[#1e1f22] border border-[#35373c] text-[#949ba4] flex flex-col items-center gap-1 transition";
+        }
+      }
+
+      setStepActive(sScrape, pct >= 5 && pct < 52, pct >= 52);
+      setStepActive(sToken, pct >= 52 && pct < 75, pct >= 75);
+      setStepActive(sEmbed, pct >= 75 && pct < 90, pct >= 90);
+      setStepActive(sBayes, pct >= 90, pct >= 100);
+    }
+
+    async function runPrediction() {
+      const channelId = document.getElementById("channelId").value.trim();
+      const limit = parseInt(document.getElementById("messageLimit").value) || 10000;
+      const confession = document.getElementById("confessionText").value.trim();
+      let token = document.getElementById("discordToken").value.trim();
+      let geminiKey = document.getElementById("geminiApiKey").value.trim();
+      const forceScrape = document.getElementById("forceScrape").checked;
+
+      if (!confession) {
+        alert("Please paste or write a confession text to analyze.");
+        return;
+      }
+
+      latestConfession = confession;
+
+      // Switch to analysis tab to view progress
+      switchTab("analysis");
+      document.getElementById("emptyState").classList.add("hidden");
+      document.getElementById("resultsView").classList.add("hidden");
+      document.getElementById("loadingState").classList.remove("hidden");
+
+      updateProgressUI({ pct: 5, stage: "initializing", message: "Connecting to analyzer backend..." });
+
+      if (progressPollTimer) clearInterval(progressPollTimer);
+      progressPollTimer = setInterval(async () => {
+        try {
+          const pRes = await fetch("/api/progress");
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            updateProgressUI(pData);
+          }
+        } catch (e) {}
+      }, 350);
+
+      try {
+        const res = await fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            channel_id: channelId,
+            limit: limit,
+            confession: confession,
+            token: token,
+            gemini_api_key: geminiKey,
+            force_scrape: forceScrape
+          })
+        });
+
+        const json = await res.json();
+        clearInterval(progressPollTimer);
+
+        if (!res.ok) {
+          alert(`Error: ${json.message || "Failed to run prediction."}`);
+          document.getElementById("loadingState").classList.add("hidden");
+          document.getElementById("emptyState").classList.remove("hidden");
+          return;
+        }
+
+        updateProgressUI({ pct: 100, stage: "complete", message: "Attribution complete!" });
+        latestPredictionData = json.data;
+        document.getElementById("analysisBadge").classList.remove("hidden");
+
+        setTimeout(() => {
+          renderResults(json.data);
+          generateDossier();
+          // Inform the chat bot about the investigation
+          const top = json.data.top_rankings[0];
+          if (top) {
+            appendChatBubble("ai", `🚨 **Attribution Complete!**\nI've calculated the 5-layer mathematical attribution on this confession.\n- **#1 Prime Suspect:** **${top.display_name}** (@${top.username}) with **${top.posterior_probability_pct}%** Bayesian probability.\n\nYou can view the full evidence cards in the **Attribution & Math Dossier** tab, or ask me any questions about why they match!`);
+          }
+        }, 200);
+
+      } catch (err) {
+        clearInterval(progressPollTimer);
+        alert("Network error communicating with local server: " + err.message);
+        document.getElementById("loadingState").classList.add("hidden");
+        document.getElementById("emptyState").classList.remove("hidden");
+      }
+    }
+
+    function renderResults(data) {
+      document.getElementById("loadingState").classList.add("hidden");
+      document.getElementById("resultsView").classList.remove("hidden");
+
+      const noticeBanner = document.getElementById("noticeBanner");
+      const noticeText = document.getElementById("noticeText");
+      if (data.notice) {
+        noticeText.textContent = data.notice;
+        noticeBanner.classList.remove("hidden");
+      } else {
+        noticeBanner.classList.add("hidden");
+      }
+
+      document.getElementById("statMsgs").textContent = data.total_messages_analyzed.toLocaleString();
+      document.getElementById("statAuthors").textContent = data.total_authors_analyzed;
+      document.getElementById("totalCandidatesCount").textContent = data.total_authors_analyzed;
+
+      if (data.time_window && data.time_window.display) {
+        document.getElementById("statTimeSpan").textContent = data.time_window.display;
+      }
+
+      const cachePill = document.getElementById("cachePill");
+      if (data.used_cache) {
+        cachePill.textContent = "Cached Corpus";
+        cachePill.className = "text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium";
+      } else {
+        cachePill.textContent = "Scraped & Merged";
+        cachePill.className = "text-[10px] bg-[#5865F2]/20 text-[#5865F2] border border-[#5865F2]/30 px-2 py-0.5 rounded-full font-medium";
+      }
+
+      const top = data.top_rankings[0];
+      if (top) {
+        document.getElementById("topSuspectName").textContent = `${top.display_name} (${top.posterior_probability_pct}%)`;
+      }
+
+      const container = document.getElementById("suspectCardsContainer");
+      container.innerHTML = "";
+
+      const medalColors = [
+        { bg: "bg-amber-500/10 border-amber-500/30", badge: "bg-amber-500 text-black", title: "#1 Prime Suspect", icon: "crown" },
+        { bg: "bg-slate-400/10 border-slate-400/30", badge: "bg-slate-400 text-black", title: "#2 Secondary Link", icon: "user-check" },
+        { bg: "bg-amber-700/10 border-amber-700/30", badge: "bg-amber-700 text-white", title: "#3 Candidate", icon: "user" }
+      ];
+
+      data.top_rankings.slice(0, 3).forEach((candidate, idx) => {
+        const style = medalColors[idx] || medalColors[2];
+        const card = document.createElement("div");
+        card.className = `p-4 rounded-2xl border transition hover:border-[#5865F2] cursor-pointer ${style.bg} ${idx === 0 ? 'ring-1 ring-[#5865F2]' : ''}`;
+        card.onclick = () => renderEvidenceForUser(candidate);
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-[#1e1f22] flex items-center justify-center font-bold text-lg text-white border border-[#35373c]">
+                ${candidate.display_name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${style.badge}">${style.title}</span>
+                  <span class="text-xs text-[#949ba4] font-mono">${candidate.message_count} msgs</span>
+                </div>
+                <h4 class="text-base font-bold text-white mt-0.5">${candidate.display_name} <span class="text-xs text-[#949ba4] font-normal">(@${candidate.username})</span></h4>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-black text-white font-mono">${candidate.posterior_probability_pct}%</div>
+              <div class="text-[10px] text-[#949ba4] uppercase tracking-wider">Bayesian Posterior</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 pt-3 border-t border-[#35373c]/50 text-[11px]">
+            <div class="bg-[#1e1f22]/70 p-2 rounded-lg border border-[#35373c]/40">
+              <span class="text-[#949ba4] block text-[10px] uppercase font-semibold">Burrows' Delta:</span>
+              <span class="text-white font-semibold font-mono text-xs">${candidate.layer_breakdown.burrows_delta_proximity}</span>
+            </div>
+            <div class="bg-[#1e1f22]/70 p-2 rounded-lg border border-[#35373c]/40">
+              <span class="text-[#949ba4] block text-[10px] uppercase font-semibold">N-Gram TF-IDF:</span>
+              <span class="text-white font-semibold font-mono text-xs">${candidate.layer_breakdown.ngram_tfidf_cosine}</span>
+            </div>
+            <div class="bg-[#1e1f22]/70 p-2 rounded-lg border border-[#35373c]/40">
+              <span class="text-[#949ba4] block text-[10px] uppercase font-semibold">Zipfian Surprisal:</span>
+              <span class="text-white font-semibold font-mono text-xs">${candidate.layer_breakdown.zipfian_surprisal}</span>
+            </div>
+            <div class="bg-[#1e1f22]/70 p-2 rounded-lg border border-[#35373c]/40">
+              <span class="text-[#949ba4] block text-[10px] uppercase font-semibold">Semantic Embed:</span>
+              <span class="text-[#5865F2] font-semibold font-mono text-xs">${candidate.layer_breakdown.semantic_embedding_cosine}</span>
+            </div>
+          </div>
+
+          <div class="mt-2.5 flex flex-wrap items-center gap-2 text-[10px] text-[#949ba4] font-mono">
+            <span>R_drop: <strong class="text-emerald-400 font-bold">${candidate.biometrics ? candidate.biometrics.drop_ratio : candidate.descriptive_stylometrics.drop_ratio}</strong></span>
+            <span>• Yule's K: <strong class="text-white font-bold">${candidate.descriptive_stylometrics.yules_k}</strong></span>
+            <span>• Entropy: <strong class="text-white font-bold">${candidate.descriptive_stylometrics.shannon_entropy}</strong></span>
+            <span>• Clause Len: <strong class="text-white font-bold">${candidate.descriptive_stylometrics.mean_clause_len}</strong></span>
+            <span>• Punct: <strong class="text-white font-bold">${(candidate.descriptive_stylometrics.punct_ratio * 100).toFixed(1)}%</strong></span>
+            ${candidate.is_anomaly ? '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded font-sans font-semibold">Mimicry / Jitter Flag</span>' : ''}
+            ${candidate.negative_penalties && candidate.negative_penalties.penalty_multiplier < 1.0 ? `<span class="bg-red-500/20 text-red-300 border border-red-500/40 px-1.5 py-0.5 rounded font-sans font-semibold">Penalty: ×${candidate.negative_penalties.penalty_multiplier}</span>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      if (data.top_rankings[0]) {
+        renderEvidenceForUser(data.top_rankings[0]);
+      }
+
+      const tbody = document.getElementById("allRankingsTbody");
+      tbody.innerHTML = "";
+      data.all_rankings.forEach((r, i) => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-[#1e1f22]/50 transition cursor-pointer";
+        row.onclick = () => renderEvidenceForUser(r);
+        row.innerHTML = `
+          <td class="py-2 px-3 font-mono text-[#949ba4]">#${i + 1}</td>
+          <td class="py-2 px-3 text-white font-medium">${r.display_name} <span class="text-[#949ba4] text-[11px]">(@${r.username})</span></td>
+          <td class="py-2 px-3 font-mono text-[#949ba4]">${r.message_count}</td>
+          <td class="py-2 px-3 font-mono text-white">${r.layer_breakdown.burrows_delta_proximity}</td>
+          <td class="py-2 px-3 font-mono text-white">${r.layer_breakdown.ngram_tfidf_cosine}</td>
+          <td class="py-2 px-3 font-mono text-white">${r.layer_breakdown.zipfian_surprisal}</td>
+          <td class="py-2 px-3 font-mono text-white">${r.layer_breakdown.semantic_embedding_cosine}</td>
+          <td class="py-2 px-3 font-mono text-right font-bold text-emerald-400">${r.posterior_probability_pct}%</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      lucide.createIcons();
+    }
+
+    function renderEvidenceForUser(candidate) {
+      document.getElementById("evidenceAuthorLabel").textContent = `Showing evidence for: ${candidate.display_name} (@${candidate.username})`;
+      const quotesContainer = document.getElementById("evidenceQuotesList");
+      quotesContainer.innerHTML = "";
+
+      if (!candidate.evidence || candidate.evidence.length === 0) {
+        quotesContainer.innerHTML = `<div class="p-4 text-xs text-[#949ba4] text-center">No explicit quote trigger markers found for this user.</div>`;
+        return;
+      }
+
+      candidate.evidence.forEach(ev => {
+        const item = document.createElement("div");
+        item.className = "p-3 rounded-xl bg-[#1e1f22] border border-[#35373c] text-xs space-y-1.5";
+        const msgText = typeof ev === 'string' ? ev : (ev.message || '');
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-white">${candidate.display_name}</span>
+          </div>
+          <p class="text-[#dbdee1] font-mono leading-relaxed bg-[#2b2d31]/50 p-2 rounded-lg border border-[#35373c]/40">${escapeHtml(msgText)}</p>
+        `;
+        quotesContainer.appendChild(item);
+      });
+    }
+
+    async function generateDossier() {
+      if (!latestPredictionData || !latestConfession) return;
+
+      const loadingEl = document.getElementById("dossierLoading");
+      const contentEl = document.getElementById("dossierContent");
+      const refreshBtn = document.getElementById("btnRefreshDossier");
+
+      loadingEl.classList.remove("hidden");
+      contentEl.classList.add("hidden");
+      refreshBtn.disabled = true;
+
+      try {
+        const res = await fetch("/api/ai_analysis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            confession: latestConfession,
+            prediction_data: latestPredictionData
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.dossier && data.dossier.dossier_markdown) {
+          contentEl.innerHTML = marked.parse(data.dossier.dossier_markdown);
+          loadingEl.classList.add("hidden");
+          contentEl.classList.remove("hidden");
+        } else {
+          contentEl.innerHTML = `<div class="p-4 text-rose-400 bg-rose-500/10 rounded-xl border border-rose-500/30 text-xs">AI Dossier Error: ${data.message || "Failed to generate dossier."}</div>`;
+          loadingEl.classList.add("hidden");
+          contentEl.classList.remove("hidden");
+        }
+      } catch (err) {
+        contentEl.innerHTML = `<div class="p-4 text-rose-400 bg-rose-500/10 rounded-xl border border-rose-500/30 text-xs">Network error connecting to Gemini API: ${err.message}</div>`;
+        loadingEl.classList.add("hidden");
+        contentEl.classList.remove("hidden");
+      } finally {
+        refreshBtn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    async function sendChatMessage(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      input.value = "";
+      appendChatBubble("user", message);
+
+      const btn = document.getElementById("btnSendChat");
+      btn.disabled = true;
+      btn.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>`;
+
+      const typingId = "typingIndicator_" + Date.now();
+      appendTypingBubble(typingId);
+
+      const confessionCurrent = latestConfession || document.getElementById("confessionText").value.trim();
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: message,
+            history: interrogationHistory,
+            confession: confessionCurrent,
+            prediction_data: latestPredictionData || {}
+          })
+        });
+
+        const data = await res.json();
+        removeElement(typingId);
+
+        if (data.success && data.reply) {
+          appendChatBubble("ai", data.reply);
+          interrogationHistory.push({ role: "user", text: message });
+          interrogationHistory.push({ role: "model", text: data.reply });
+        } else {
+          appendChatBubble("ai", `⚠️ **Error:** ${data.message || "Failed to generate reply."}`);
+        }
+      } catch (err) {
+        removeElement(typingId);
+        appendChatBubble("ai", `⚠️ **Connection Error:** ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Send</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    function askQuickPrompt(text) {
+      // Ensure we are in chat tab
+      switchTab("chat");
+      document.getElementById("chatInput").value = text;
+      sendChatMessage();
+    }
+
+    function appendChatBubble(sender, text) {
+      const container = document.getElementById("chatMessages");
+      const div = document.createElement("div");
+      div.className = "flex items-start gap-2.5";
+
+      if (sender === "user") {
+        div.innerHTML = `
+          <div class="w-7 h-7 rounded-lg bg-[#5865F2] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">You</div>
+          <div class="space-y-0.5 max-w-[85%] bg-[#2b2d31] p-3 rounded-xl border border-[#35373c] text-[#dbdee1]">
+            <p class="leading-relaxed font-sans text-xs">${escapeHtml(text)}</p>
+          </div>
+        `;
+      } else {
+        div.innerHTML = `
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7c3aed] to-[#c084fc] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm">AI</div>
+          <div class="space-y-1 max-w-[90%] bg-[#24212e]/80 p-3.5 rounded-xl border border-[#a855f7]/30 text-[#dbdee1] prose-dossier">
+            ${marked.parse(text)}
+          </div>
+        `;
+      }
+
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function appendTypingBubble(id) {
+      const container = document.getElementById("chatMessages");
+      const div = document.createElement("div");
+      div.id = id;
+      div.className = "flex items-start gap-2.5 text-[#949ba4]";
+      div.innerHTML = `
+        <div class="w-7 h-7 rounded-lg bg-[#7c3aed]/30 text-[#c084fc] flex items-center justify-center flex-shrink-0 text-xs font-bold">AI</div>
+        <div class="bg-[#24212e] p-2.5 rounded-xl border border-[#a855f7]/20 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#c084fc] animate-bounce"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[#c084fc] animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[#c084fc] animate-bounce [animation-delay:0.4s]"></span>
+          <span class="text-[11px] text-[#c084fc] ml-1">Investigating evidence...</span>
+        </div>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function clearInterrogationHistory() {
+      interrogationHistory = [];
+      const container = document.getElementById("chatMessages");
+      container.innerHTML = `
+        <div class="flex items-start gap-2.5 text-[#949ba4]">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7c3aed] to-[#c084fc] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm">AI</div>
+          <div class="space-y-1.5 max-w-[90%] bg-[#24212e]/80 p-3.5 rounded-xl border border-[#a855f7]/30 text-[#dbdee1]">
+            <p class="text-white font-semibold text-sm">Chat Memory Reset</p>
+            <p class="leading-relaxed text-xs">Chat history cleared. I am ready for your next question or investigation topic.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function removeElement(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ================= PART 2: BEHAVIORAL ANALYST & 3-LINE ROAST LOGIC =================
+    let latestRoastLines = [];
+    let isAllMessagesMode = false;
+
+    function scrollToBehaviorAnalyst() {
+      const sec = document.getElementById("behavioralAnalystSection");
+      if (sec) {
+        sec.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          const input = document.getElementById("targetMemberInput");
+          if (input) input.focus();
+        }, 500);
+      }
+    }
+
+    let windowCachedMembers = [];
+    let currentSelectedMember = null;
+
+    function onTargetMemberInputChange(val) {
+      const q = (val || "").trim().toLowerCase();
+      const cleanQ = q.startsWith("@") ? q.slice(1) : q;
+      
+      const text = document.getElementById("targetStatusText");
+      const countEl = document.getElementById("targetStatusCount");
+      const fetchBtnText = document.getElementById("fetchMoreBtnText");
+
+      if (!cleanQ) {
+        currentSelectedMember = null;
+        text.textContent = "Select a member above or choose from active members below:";
+        countEl.textContent = "";
+        fetchBtnText.textContent = "Hunt Older Messages from Discord";
+        checkSampleExceedNotice();
+        return;
+      }
+
+      // Find in cached members
+      const matched = windowCachedMembers.find(m => 
+        m.username.toLowerCase() === cleanQ || 
+        m.display_name.toLowerCase() === cleanQ ||
+        (cleanQ.length >= 3 && (m.username.toLowerCase().includes(cleanQ) || m.display_name.toLowerCase().includes(cleanQ)))
+      );
+
+      if (matched) {
+        currentSelectedMember = matched;
+        text.innerHTML = `🎯 <strong>${escapeHtml(matched.display_name)}</strong> <span class="text-[#949ba4]">(@${escapeHtml(matched.username)})</span>`;
+        countEl.textContent = `${matched.count.toLocaleString()} msgs in archive`;
+        fetchBtnText.textContent = `Hunt Older Msgs for @${matched.username}`;
+        checkSampleExceedNotice();
+      } else {
+        currentSelectedMember = null;
+        text.textContent = `Targeting: ${val}`;
+        countEl.textContent = "Checking archive...";
+        fetchBtnText.textContent = `Hunt Older Messages for ${val}`;
+        checkSampleExceedNotice();
+      }
+    }
+
+    function checkSampleExceedNotice() {
+      const exceedNotice = document.getElementById("sampleExceedNotice");
+      const exceedText = document.getElementById("sampleExceedNoticeText");
+      if (!exceedNotice) return;
+
+      if (!currentSelectedMember) {
+        exceedNotice.classList.add("hidden");
+        return;
+      }
+      
+      const rawLimit = (document.getElementById("behaviorLimitNumber").value || "").trim().toUpperCase();
+      if (isAllMessagesMode || rawLimit === "ALL") {
+        exceedNotice.classList.remove("hidden");
+        exceedText.textContent = `All ${currentSelectedMember.count.toLocaleString()} available messages for @${currentSelectedMember.username} will be analyzed by Gemini Flash.`;
+        return;
+      }
+
+      const reqLimit = parseInt(rawLimit) || 100;
+      if (reqLimit > currentSelectedMember.count) {
+        exceedNotice.classList.remove("hidden");
+        exceedText.textContent = `@${currentSelectedMember.username} currently has ${currentSelectedMember.count.toLocaleString()} messages in the local archive. Gemini will analyze all ${currentSelectedMember.count.toLocaleString()} available messages. Use the Discord fetch button below to hunt older ones!`;
+      } else {
+        exceedNotice.classList.add("hidden");
+      }
+    }
+
+    function syncLimitFromNumber(val) {
+      if (val.toUpperCase() === "ALL") {
+        setPresetAll();
+        return;
+      }
+      isAllMessagesMode = false;
+      const num = parseInt(val) || 100;
+      const slider = document.getElementById("behaviorLimitRange");
+      if (num <= 5000) slider.value = num;
+      const btnAll = document.getElementById("btnPresetAll");
+      btnAll.classList.remove("bg-[#f59e0b]", "text-black");
+      btnAll.classList.add("bg-[#f59e0b]/20", "text-[#f59e0b]");
+      checkSampleExceedNotice();
+    }
+
+    function syncLimitFromRange(val) {
+      isAllMessagesMode = false;
+      document.getElementById("behaviorLimitNumber").value = val;
+      const btnAll = document.getElementById("btnPresetAll");
+      btnAll.classList.remove("bg-[#f59e0b]", "text-black");
+      btnAll.classList.add("bg-[#f59e0b]/20", "text-[#f59e0b]");
+      checkSampleExceedNotice();
+    }
+
+    function setPresetLimit(val) {
+      isAllMessagesMode = false;
+      document.getElementById("behaviorLimitNumber").value = val;
+      document.getElementById("behaviorLimitRange").value = Math.min(val, 5000);
+      const btnAll = document.getElementById("btnPresetAll");
+      btnAll.classList.remove("bg-[#f59e0b]", "text-black");
+      btnAll.classList.add("bg-[#f59e0b]/20", "text-[#f59e0b]");
+      checkSampleExceedNotice();
+    }
+
+    function setPresetAll() {
+      isAllMessagesMode = true;
+      document.getElementById("behaviorLimitNumber").value = "ALL";
+      document.getElementById("behaviorLimitRange").value = 5000;
+      const btnAll = document.getElementById("btnPresetAll");
+      btnAll.classList.remove("bg-[#f59e0b]/20", "text-[#f59e0b]");
+      btnAll.classList.add("bg-[#f59e0b]", "text-black");
+      checkSampleExceedNotice();
+    }
+
+    async function loadMemberList() {
+      try {
+        const res = await fetch("/api/members");
+        const data = await res.json();
+        if (data.success && data.members) {
+          windowCachedMembers = data.members;
+          const datalist = document.getElementById("memberDatalist");
+          const chipsContainer = document.getElementById("quickMemberChips");
+          datalist.innerHTML = "";
+          chipsContainer.innerHTML = "";
+
+          // Populate datalist with EXACTLY ONE entry per member (eliminating duplicates)
+          data.members.forEach(m => {
+            const opt = document.createElement("option");
+            opt.value = `@${m.username}`;
+            opt.label = `${m.display_name} • ${m.count.toLocaleString()} msgs`;
+            datalist.appendChild(opt);
+          });
+
+          // Populate top 16 quick chips
+          data.members.slice(0, 16).forEach(m => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "px-2 py-1 rounded-lg bg-[#1e1f22] hover:bg-[#35373c] text-[#dbdee1] hover:text-[#f59e0b] border border-[#35373c] transition flex items-center gap-1.5 font-mono text-[11px]";
+            btn.innerHTML = `<span class="font-medium text-white">${escapeHtml(m.display_name)}</span> <span class="text-[#80848e] text-[10px]">(@${escapeHtml(m.username)})</span> <span class="px-1 py-0.2 rounded bg-[#2b2d31] text-[#f59e0b] text-[10px] font-bold">${m.count.toLocaleString()}</span>`;
+            btn.onclick = () => selectMemberChip(`@${m.username}`);
+            chipsContainer.appendChild(btn);
+          });
+
+          // Refresh active member status if something is already typed
+          const currentVal = document.getElementById("targetMemberInput").value;
+          if (currentVal) {
+            onTargetMemberInputChange(currentVal);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load member list:", err);
+      }
+    }
+
+    function selectMemberChip(nameOrUser) {
+      const input = document.getElementById("targetMemberInput");
+      input.value = nameOrUser;
+      onTargetMemberInputChange(nameOrUser);
+      input.focus();
+    }
+
+    let scrapePollTimer = null;
+
+    async function fetchMoreUserMessages() {
+      const person = document.getElementById("targetMemberInput").value.trim();
+      const count = parseInt(document.getElementById("fetchMoreUserTargetCount").value) || 250;
+      const channelId = document.getElementById("channelId").value.trim() || "1516697578107043850";
+      const token = document.getElementById("discordToken").value.trim();
+
+      if (!person) {
+        alert("Please enter or select a member first so Discord knows who to hunt messages for.");
+        return;
+      }
+
+      const btn = document.getElementById("btnFetchMoreUserMsgs");
+      const icon = document.getElementById("fetchMoreIcon");
+      const text = document.getElementById("fetchMoreBtnText");
+      const card = document.getElementById("liveScrapeProgressCard");
+      const title = document.getElementById("liveScrapeTitle");
+      const bar = document.getElementById("scrapeProgressBar");
+      const statusText = document.getElementById("scrapeStatusText");
+      const percentText = document.getElementById("scrapePercentText");
+      const foundBadge = document.getElementById("liveFoundBadge");
+
+      btn.disabled = true;
+      icon.classList.add("animate-spin");
+      text.textContent = `Hunting +${count} msgs...`;
+
+      // Show live tracking box
+      card.classList.remove("hidden");
+      title.textContent = `Hunting +${count} msgs for ${person}...`;
+      bar.style.width = "5%";
+      percentText.textContent = "5%";
+      statusText.textContent = "Initializing Discord API stream...";
+      foundBadge.textContent = "+0 found";
+
+      try {
+        const res = await fetch("/api/start_fetch_user_messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            person: person,
+            count: count,
+            channel_id: channelId,
+            token: token
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert(`⚠️ Notice: ${data.message || "Failed to start Discord scrape."}`);
+          card.classList.add("hidden");
+          btn.disabled = false;
+          icon.classList.remove("animate-spin");
+          text.textContent = `Hunt Older Msgs for ${person}`;
+          return;
+        }
+
+        // Start polling progress every 600ms
+        if (scrapePollTimer) clearInterval(scrapePollTimer);
+        scrapePollTimer = setInterval(() => pollScrapeProgress(person), 600);
+
+      } catch (err) {
+        alert("Network error starting scrape: " + err.message);
+        card.classList.add("hidden");
+        btn.disabled = false;
+        icon.classList.remove("animate-spin");
+        text.textContent = `Hunt Older Msgs for ${person}`;
+      }
+    }
+
+    async function pollScrapeProgress(person) {
+      try {
+        const res = await fetch("/api/user_scrape_progress");
+        const data = await res.json();
+
+        const bar = document.getElementById("scrapeProgressBar");
+        const statusText = document.getElementById("scrapeStatusText");
+        const percentText = document.getElementById("scrapePercentText");
+        const foundBadge = document.getElementById("liveFoundBadge");
+        const statusCount = document.getElementById("targetStatusCount");
+
+        // 1. Live update the progress bar & percentage
+        const pct = Math.max(5, data.percent || 0);
+        bar.style.width = `${pct}%`;
+        percentText.textContent = `${data.percent || 0}%`;
+        statusText.textContent = data.status_text || "Scraping Discord...";
+        foundBadge.textContent = `+${data.user_found || 0} found`;
+
+        // 2. LIVE UPDATE THE MESSAGE COUNT ON SCREEN!
+        if (data.user_current_total) {
+          statusCount.innerHTML = `<span class="text-emerald-400 font-bold text-sm animate-pulse">${data.user_current_total.toLocaleString()}</span> msgs in archive <span class="text-emerald-400 font-mono text-[11px]">(+${data.user_found || 0})</span>`;
+        }
+
+        // 3. When finished or cancelled
+        if (data.completed || !data.active) {
+          clearInterval(scrapePollTimer);
+          scrapePollTimer = null;
+
+          const btn = document.getElementById("btnFetchMoreUserMsgs");
+          const icon = document.getElementById("fetchMoreIcon");
+          const text = document.getElementById("fetchMoreBtnText");
+          btn.disabled = false;
+          icon.classList.remove("animate-spin");
+          text.textContent = `Hunt Older Msgs for ${person}`;
+
+          bar.style.width = "100%";
+          percentText.textContent = "100%";
+          statusText.innerHTML = `<span class="text-emerald-400 font-bold">✅ ${escapeHtml(data.status_text)}</span>`;
+
+          // Refresh database status and reload member list
+          checkServerStatus();
+          await loadMemberList();
+          onTargetMemberInputChange(person);
+
+          setTimeout(() => {
+            const card = document.getElementById("liveScrapeProgressCard");
+            if (card && !scrapePollTimer) card.classList.add("hidden");
+          }, 6000);
+        }
+      } catch (err) {
+        console.error("Error polling scrape progress:", err);
+      }
+    }
+
+    async function cancelUserScrape() {
+      try {
+        const res = await fetch("/api/cancel_user_scrape", { method: "POST" });
+        const data = await res.json();
+        const statusText = document.getElementById("scrapeStatusText");
+        statusText.textContent = "Stopping scrape and merging saved messages...";
+      } catch (err) {
+        console.error("Error requesting cancel:", err);
+      }
+    }
+
+    async function runBehaviorAnalysis(e) {
+      if (e) e.preventDefault();
+      const person = document.getElementById("targetMemberInput").value.trim();
+      let limit = 0;
+      const rawLimit = (document.getElementById("behaviorLimitNumber").value || "").trim().toUpperCase();
+      if (isAllMessagesMode || rawLimit === "ALL" || rawLimit === "0") {
+        limit = 0; // 0 instructs backend to use ALL available messages
+      } else {
+        limit = parseInt(rawLimit) || 100;
+      }
+
+      const channelId = document.getElementById("channelId").value.trim() || "1516697578107043850";
+      const geminiKey = document.getElementById("geminiApiKey").value.trim();
+
+      if (!person) {
+        alert("Please enter a member's name or username to analyze.");
+        return;
+      }
+
+      // UI States
+      document.getElementById("behaviorEmptyState").classList.add("hidden");
+      document.getElementById("behaviorResultView").classList.add("hidden");
+      document.getElementById("behaviorLoadingState").classList.remove("hidden");
+      document.getElementById("btnRunBehavior").disabled = true;
+
+      try {
+        const res = await fetch("/api/behavioral_analysis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            person: person,
+            limit: limit,
+            channel_id: channelId,
+            gemini_api_key: geminiKey
+          })
+        });
+
+        const data = await res.json();
+        document.getElementById("behaviorLoadingState").classList.add("hidden");
+        document.getElementById("btnRunBehavior").disabled = false;
+
+        if (!res.ok) {
+          alert(`Error: ${data.message || "Failed to analyze member behavior."}`);
+          document.getElementById("behaviorEmptyState").classList.remove("hidden");
+          return;
+        }
+
+        // Render Results
+        renderBehaviorResults(data);
+
+      } catch (err) {
+        document.getElementById("behaviorLoadingState").classList.add("hidden");
+        document.getElementById("btnRunBehavior").disabled = false;
+        alert("Network error communicating with server: " + err.message);
+        document.getElementById("behaviorEmptyState").classList.remove("hidden");
+      }
+    }
+
+    function renderBehaviorResults(data) {
+      document.getElementById("behaviorResultView").classList.remove("hidden");
+
+      const member = data.member || {};
+      const name = member.display_name || "Unknown";
+      const user = member.username || "unknown";
+      const analyzedCount = member.analyzed_count || 0;
+      const totalCount = member.total_count || 0;
+
+      document.getElementById("behaviorAvatar").textContent = name.charAt(0).toUpperCase();
+      document.getElementById("behaviorTargetName").innerHTML = `${escapeHtml(name)} <span id="behaviorTargetUser" class="text-xs text-[#949ba4] font-normal">(@${escapeHtml(user)})</span>`;
+      document.getElementById("behaviorAnalyzedCount").textContent = `${analyzedCount} msgs analyzed`;
+      document.getElementById("behaviorTotalCount").textContent = totalCount.toLocaleString();
+
+      // Render 3-Line Roast
+      latestRoastLines = data.roast_lines || [];
+      const roastContainer = document.getElementById("roastLinesContainer");
+      roastContainer.innerHTML = "";
+
+      if (latestRoastLines.length > 0) {
+        latestRoastLines.forEach((line, idx) => {
+          const item = document.createElement("div");
+          item.className = "p-3 rounded-xl bg-[#1e1f22]/90 border border-amber-500/30 text-amber-100 text-xs font-mono flex items-start gap-3 shadow-md";
+          item.innerHTML = `
+            <span class="w-5 h-5 rounded-md bg-amber-500/20 text-[#f59e0b] border border-amber-500/30 flex items-center justify-center font-bold text-[11px] flex-shrink-0">
+              #${idx + 1}
+            </span>
+            <p class="leading-relaxed pt-0.5">${escapeHtml(line)}</p>
+          `;
+          roastContainer.appendChild(item);
+        });
+      } else {
+        roastContainer.innerHTML = `<div class="p-3 text-xs text-[#949ba4] italic">Roast generation completed in full report below.</div>`;
+      }
+
+      // Render Full Profile Markdown
+      const mdContainer = document.getElementById("behaviorProfileMarkdown");
+      if (data.full_markdown) {
+        mdContainer.innerHTML = marked.parse(data.full_markdown);
+      } else {
+        mdContainer.innerHTML = "<p class='text-xs text-[#949ba4]'>No detailed profile output received.</p>";
+      }
+
+      lucide.createIcons();
+    }
+
+    function copyRoastText() {
+      if (!latestRoastLines || latestRoastLines.length === 0) return;
+      const textToCopy = latestRoastLines.map((l, i) => `${i + 1}. ${l}`).join("\n");
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = document.getElementById("btnCopyRoast");
+        btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> <span class="text-emerald-400">Copied!</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> <span>Copy Roast</span>`;
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    async function syncLatestMessages() {
+      const btn = document.getElementById("btnSyncLatest");
+      const icon = document.getElementById("syncIcon");
+      const text = document.getElementById("syncBtnText");
+      const channelId = document.getElementById("channelId").value.trim() || "1516697578107043850";
+      const token = document.getElementById("discordToken").value.trim();
+
+      btn.disabled = true;
+      icon.classList.add("animate-spin");
+      text.textContent = "Syncing...";
+
+      try {
+        const res = await fetch("/api/sync_latest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ channel_id: channelId, token: token })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (data.added_count > 0) {
+            alert(`✅ Synced ${data.added_count.toLocaleString()} new messages!\nCache is now updated to: ${data.time_window}`);
+          } else {
+            alert("✅ Cache is already completely up to date with the latest Discord messages!");
+          }
+          checkServerStatus();
+          loadMemberList();
+        } else {
+          alert(`Sync warning: ${data.message || "Failed to sync."}`);
+        }
+      } catch (err) {
+        alert("Network error syncing messages: " + err.message);
+      } finally {
+        btn.disabled = false;
+        icon.classList.remove("animate-spin");
+        text.textContent = "Sync Latest";
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>
