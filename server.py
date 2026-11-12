@@ -745,7 +745,32 @@ def api_sync_latest():
         return jsonify({"error": "SYNC_FAILED", "message": str(e)}), 500
 
 
+@app.route("/api/bot_status", methods=["GET"])
+def api_bot_status():
+    """Returns the live online presence status of the Discord Gateway Bot."""
+    try:
+        import bot
+        b = bot.get_gateway_bot()
+        return jsonify({
+            "is_online": b.is_online,
+            "username": b.bot_user.get("username") if b.bot_user else None,
+            "id": b.bot_user.get("id") if b.bot_user else None,
+            "status_message": b.status_message
+        })
+    except Exception as e:
+        return jsonify({"is_online": False, "error": str(e)})
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
+    # Automatically start Discord Gateway bot so it shows ONLINE in Discord
+    try:
+        import bot
+        gateway_bot = bot.get_gateway_bot()
+        gateway_bot.start_background()
+        print("[+] Discord Gateway bot background service launched.")
+    except Exception as e:
+        print(f"[!] Warning: Could not start Discord Gateway presence: {e}")
+
     print(f"[*] Starting Discord Stylometric & AI Analyzer on http://127.0.0.1:{port}")
     app.run(host="0.0.0.0", port=port, debug=False)

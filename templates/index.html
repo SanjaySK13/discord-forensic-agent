@@ -114,6 +114,10 @@
       </div>
     </div>
     <div class="flex items-center gap-3">
+      <div id="discordBotBadge" class="hidden sm:flex items-center gap-1.5 text-xs bg-[#1e1f22] border border-emerald-500/40 px-3 py-1.5 rounded-lg text-emerald-400 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="discordBotStatusText">Bot: Online 🟢</span>
+      </div>
       <div id="geminiBadge" class="hidden sm:flex items-center gap-1.5 text-xs bg-[#1e1f22] border border-[#a855f7]/30 px-3 py-1.5 rounded-lg text-[#c084fc]">
         <span class="w-2 h-2 rounded-full bg-[#a855f7] animate-pulse"></span>
         <span id="geminiStatusText">Gemini 3.5 Flash Active</span>
@@ -1007,6 +1011,23 @@ Ts people should stop acting fake for real get a life 🤡`;
             gInput.placeholder = `Gemini key saved (${data.gemini_preview || '••••••••'}). Leave blank to keep.`;
           }
         }
+
+        // Check live Discord Gateway Bot status
+        try {
+          const bRes = await fetch("/api/bot_status");
+          if (bRes.ok) {
+            const bData = await bRes.json();
+            const bBadge = document.getElementById("discordBotBadge");
+            const bText = document.getElementById("discordBotStatusText");
+            if (bData.is_online) {
+              if (bBadge) bBadge.classList.remove("hidden");
+              if (bText) bText.textContent = `Bot: Online 🟢 (@${bData.username || 'Discord Bot'})`;
+            } else if (bData.username) {
+              if (bBadge) bBadge.classList.remove("hidden");
+              if (bText) bText.textContent = `Connecting to Discord...`;
+            }
+          }
+        } catch (e) {}
       } catch (err) {
         document.getElementById("statusText").textContent = "Local Server Active";
       }
