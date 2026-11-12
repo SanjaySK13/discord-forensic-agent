@@ -262,3 +262,4 @@ if __name__ == "__main__":
         asyncio.run(bot.run())
     except KeyboardInterrupt:
         print("\n[*] Bot stopped by user.")
+

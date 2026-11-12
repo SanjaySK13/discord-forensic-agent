@@ -761,6 +761,18 @@ def api_bot_status():
         return jsonify({"is_online": False, "error": str(e)})
 
 
+@app.route("/api/shutdown", methods=["POST"])
+def api_shutdown():
+    """Cleanly shuts down the web server and Discord bot."""
+    def _do_shutdown():
+        time.sleep(0.6)
+        print("[*] Graceful shutdown requested. Terminating server and Discord bot...")
+        os._exit(0)
+
+    threading.Thread(target=_do_shutdown, daemon=True).start()
+    return jsonify({"success": True, "message": "Server and Discord bot are shutting down..."})
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     # Automatically start Discord Gateway bot so it shows ONLINE in Discord

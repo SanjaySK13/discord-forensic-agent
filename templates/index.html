@@ -136,6 +136,16 @@
         <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5 text-[#5865F2]"></i>
         <span id="syncBtnText">Sync Latest</span>
       </button>
+      <button 
+        type="button" 
+        id="btnShutdown" 
+        onclick="confirmShutdownServer()" 
+        title="Shut down server & Discord bot cleanly"
+        class="flex items-center gap-1.5 text-xs bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/60 px-3 py-1.5 rounded-lg text-red-400 font-medium transition shadow-sm"
+      >
+        <i data-lucide="power" class="w-3.5 h-3.5 text-red-400"></i>
+        <span>Shut Down</span>
+      </button>
     </div>
   </header>
 
@@ -1950,6 +1960,37 @@ Ts people should stop acting fake for real get a life 🤡`;
         icon.classList.remove("animate-spin");
         text.textContent = "Sync Latest";
         lucide.createIcons();
+      }
+    }
+
+    async function confirmShutdownServer() {
+      if (!confirm("Are you sure you want to shut down the Discord Forensic Agent server and Discord bot?")) {
+        return;
+      }
+      try {
+        const res = await fetch("/api/shutdown", { method: "POST" });
+        if (res.ok) {
+          document.body.innerHTML = `
+            <div class="min-h-screen bg-[#1e1f22] flex items-center justify-center p-6 text-center font-sans">
+              <div class="bg-[#2b2d31] border border-[#35373c] p-8 rounded-2xl max-w-md w-full shadow-2xl space-y-4">
+                <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto text-2xl font-bold">
+                  ⚡
+                </div>
+                <h2 class="text-xl font-bold text-white tracking-tight">Server Successfully Shut Down</h2>
+                <p class="text-xs text-[#949ba4] leading-relaxed">
+                  The Discord Forensic Agent web server and Discord Gateway bot have been cleanly stopped, and port 5000 has been released.
+                </p>
+                <div class="p-3 bg-[#1e1f22] rounded-xl border border-[#35373c] text-xs text-[#b5bac1]">
+                  You can restart it anytime by double-clicking the <strong>Discord Forensic Agent</strong> shortcut on your Desktop!
+                </div>
+                <p class="text-[11px] text-[#72767d]">You can safely close this browser tab.</p>
+              </div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        alert("Server has been shut down.");
+        window.close();
       }
     }
   </script>
