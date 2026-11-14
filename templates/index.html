@@ -42,6 +42,15 @@
       color: #dbdee1;
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
+    /* Hide ugly browser number spinners */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] { 
+      -moz-appearance: textfield; 
+    }
     .scrollbar-thin::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -98,50 +107,60 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- Top Header -->
-  <header class="bg-[#2b2d31] border-b border-[#35373c] px-6 py-4 flex items-center justify-between shadow-md">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5865F2] to-[#7c3aed] flex items-center justify-center text-white shadow-lg shadow-[#5865F2]/30">
-        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+  <header class="bg-[#2b2d31]/95 backdrop-blur-md border-b border-[#35373c] px-6 py-3.5 flex items-center justify-between shadow-lg sticky top-0 z-50">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5865F2] to-[#7c3aed] flex items-center justify-center text-white shadow-lg shadow-[#5865F2]/25">
+        <i data-lucide="shield-alert" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+        <h1 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
           Discord Stylometric Forensics
-          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-[#5865F2]/20 to-[#7c3aed]/20 text-[#a855f7] border border-[#a855f7]/40 flex items-center gap-1">
-            <i data-lucide="sparkles" class="w-3 h-3"></i> Gemini 3.5 AI
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#7c3aed]/20 text-[#c084fc] border border-[#a855f7]/30 flex items-center gap-1 shadow-sm">
+            <i data-lucide="sparkles" class="w-3 h-3 text-[#c084fc]"></i> Gemini 3.5 AI
           </span>
         </h1>
-        <p class="text-xs text-[#949ba4]">5-Layer Mathematical Attribution & Deep Cognitive Motive Profiler</p>
+        <p class="text-xs text-[#949ba4]">5-Layer Mathematical Attribution & Behavioral Motive Profiling</p>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <div id="discordBotBadge" class="hidden sm:flex items-center gap-1.5 text-xs bg-[#1e1f22] border border-emerald-500/40 px-3 py-1.5 rounded-lg text-emerald-400 shadow-sm">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span id="discordBotStatusText">Bot: Online 🟢</span>
+
+    <!-- Right Header Controls: Status Bar & Actions -->
+    <div class="flex items-center gap-2.5">
+      <!-- Unified Status Pill Bar -->
+      <div class="hidden md:flex items-center gap-3 bg-[#1e1f22] border border-[#35373c] rounded-xl px-3 py-1.5 text-xs shadow-inner">
+        <div id="discordBotBadge" class="flex items-center gap-1.5 text-emerald-400 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="discordBotStatusText">Bot: Online 🟢</span>
+        </div>
+        <div class="w-px h-3.5 bg-[#35373c]"></div>
+        <div id="geminiBadge" class="flex items-center gap-1.5 text-[#c084fc]">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 text-[#a855f7]"></i>
+          <span id="geminiStatusText">Gemini Flash</span>
+        </div>
+        <div class="w-px h-3.5 bg-[#35373c]"></div>
+        <div id="statusBadge" class="flex items-center gap-1.5 text-[#949ba4]">
+          <i data-lucide="database" class="w-3.5 h-3.5 text-[#5865F2]"></i>
+          <span id="statusText">Loading cache...</span>
+        </div>
       </div>
-      <div id="geminiBadge" class="hidden sm:flex items-center gap-1.5 text-xs bg-[#1e1f22] border border-[#a855f7]/30 px-3 py-1.5 rounded-lg text-[#c084fc]">
-        <span class="w-2 h-2 rounded-full bg-[#a855f7] animate-pulse"></span>
-        <span id="geminiStatusText">Gemini 3.5 Flash Active</span>
-      </div>
-      <div id="statusBadge" class="flex items-center gap-2 text-xs bg-[#1e1f22] border border-[#35373c] px-3 py-1.5 rounded-lg text-[#949ba4]">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span id="statusText">Checking local cache...</span>
-      </div>
+
+      <!-- Action Buttons -->
       <button 
         type="button" 
         id="btnSyncLatest" 
         onclick="syncLatestMessages()" 
         title="Sync new messages sent in Discord up to this second"
-        class="flex items-center gap-1.5 text-xs bg-[#1e1f22] hover:bg-[#2b2d31] border border-[#5865F2]/40 hover:border-[#5865F2] px-3 py-1.5 rounded-lg text-white font-medium transition shadow-sm"
+        class="flex items-center gap-1.5 text-xs bg-[#1e1f22] hover:bg-[#35373c] border border-[#5865F2]/40 hover:border-[#5865F2] px-3 py-1.5 rounded-xl text-white font-medium transition shadow-sm"
       >
         <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5 text-[#5865F2]"></i>
         <span id="syncBtnText">Sync Latest</span>
       </button>
+
       <button 
         type="button" 
         id="btnShutdown" 
         onclick="confirmShutdownServer()" 
         title="Shut down server & Discord bot cleanly"
-        class="flex items-center gap-1.5 text-xs bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/60 px-3 py-1.5 rounded-lg text-red-400 font-medium transition shadow-sm"
+        class="flex items-center gap-1.5 text-xs bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/60 px-3 py-1.5 rounded-xl text-red-400 font-medium transition shadow-sm"
       >
         <i data-lucide="power" class="w-3.5 h-3.5 text-red-400"></i>
         <span>Shut Down</span>
@@ -157,13 +176,19 @@
       <div class="bg-[#2b2d31] border border-[#35373c] rounded-2xl p-5 shadow-xl space-y-4">
         
         <div class="border-b border-[#35373c] pb-3 flex items-center justify-between">
-          <h2 class="text-base font-semibold text-white flex items-center gap-2">
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <i data-lucide="sliders" class="w-4 h-4 text-[#5865F2]"></i>
             Investigation Parameters
           </h2>
-          <button type="button" id="btnFillSample" class="text-xs text-[#5865F2] hover:text-[#7983f5] font-medium transition flex items-center gap-1">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Insert Sample
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="clearConfession()" class="text-xs text-[#949ba4] hover:text-red-400 font-medium transition">
+              Clear
+            </button>
+            <span class="text-[#35373c]">•</span>
+            <button type="button" id="btnFillSample" class="text-xs text-[#5865F2] hover:text-[#7983f5] font-semibold transition flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Insert Sample
+            </button>
+          </div>
         </div>
 
         <form id="predictionForm" class="space-y-4">
@@ -171,58 +196,73 @@
           <!-- Channel ID Input -->
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] mb-1.5 flex items-center gap-1.5">
-              <i data-lucide="hash" class="w-3.5 h-3.5 text-[#949ba4]"></i> Channel ID
+              <i data-lucide="hash" class="w-3.5 h-3.5 text-[#5865F2]"></i> Target Channel ID
             </label>
             <input 
               type="text" 
               id="channelId" 
               name="channel_id" 
               value="1516697578107043850" 
-              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#80848e] transition outline-none font-mono"
+              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-2 focus:ring-[#5865F2]/20 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#80848e] transition outline-none font-mono"
               placeholder="e.g. 1516697578107043850"
               required
             />
           </div>
 
-          <!-- Message Count Input -->
+          <!-- Message Count Input (Unlimited, No 100k cap) -->
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] mb-1.5 flex items-center justify-between">
-              <span class="flex items-center gap-1.5">
-                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#949ba4]"></i> Number of Messages
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="messageLimit" class="text-xs font-semibold uppercase tracking-wider text-[#b5bac1] flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#5865F2]"></i> Messages to Analyze
+              </label>
+              <span id="limitDisplay" class="text-xs font-mono font-semibold px-2 py-0.5 rounded-md bg-[#5865F2]/15 text-[#7983f5] border border-[#5865F2]/30">
+                10,000 messages
               </span>
-              <span id="limitDisplay" class="text-xs text-[#5865F2] font-mono">10,000 messages</span>
-            </label>
-            <input 
-              type="number" 
-              id="messageLimit" 
-              name="limit" 
-              value="10000" 
-              min="50" 
-              max="100000" 
-              step="500"
-              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-[#80848e] transition outline-none font-mono"
-              required
-            />
-            <div class="flex items-center gap-2 mt-1.5 text-[11px] text-[#949ba4]">
-              <span>Presets:</span>
-              <button type="button" onclick="document.getElementById('messageLimit').value=5000; document.getElementById('limitDisplay').textContent='5,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">5k</button>
-              <button type="button" onclick="document.getElementById('messageLimit').value=10000; document.getElementById('limitDisplay').textContent='10,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">10k</button>
-              <button type="button" onclick="document.getElementById('messageLimit').value=20000; document.getElementById('limitDisplay').textContent='20,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">20k</button>
-              <button type="button" onclick="document.getElementById('messageLimit').value=50000; document.getElementById('limitDisplay').textContent='50,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">50k</button>
-              <button type="button" onclick="document.getElementById('messageLimit').value=100000; document.getElementById('limitDisplay').textContent='100,000 messages';" class="px-1.5 py-0.5 rounded bg-[#1e1f22] hover:bg-[#35373c] text-white transition">100k</button>
+            </div>
+            
+            <div class="relative">
+              <input 
+                type="number" 
+                id="messageLimit" 
+                name="limit" 
+                value="10000" 
+                min="50" 
+                step="500"
+                oninput="onMessageLimitInput(this.value)"
+                class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-2 focus:ring-[#5865F2]/20 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono transition outline-none"
+                placeholder="Type any number (e.g. 245000) or pick a preset"
+              />
+            </div>
+
+            <!-- Sleek Presets Bar -->
+            <div class="flex flex-wrap items-center gap-1.5 mt-2">
+              <span class="text-[11px] text-[#949ba4] font-medium mr-0.5">Presets:</span>
+              <button type="button" onclick="setLimitPreset(25000)" class="preset-btn px-2 py-0.5 rounded-lg text-[11px] font-medium bg-[#1e1f22] hover:bg-[#35373c] text-[#dbdee1] border border-[#35373c] hover:border-[#5865F2]/50 transition">25k</button>
+              <button type="button" onclick="setLimitPreset(50000)" class="preset-btn px-2 py-0.5 rounded-lg text-[11px] font-medium bg-[#1e1f22] hover:bg-[#35373c] text-[#dbdee1] border border-[#35373c] hover:border-[#5865F2]/50 transition">50k</button>
+              <button type="button" onclick="setLimitPreset(100000)" class="preset-btn px-2 py-0.5 rounded-lg text-[11px] font-medium bg-[#1e1f22] hover:bg-[#35373c] text-[#dbdee1] border border-[#35373c] hover:border-[#5865F2]/50 transition">100k</button>
+              <button type="button" onclick="setLimitPreset(250000)" class="preset-btn px-2 py-0.5 rounded-lg text-[11px] font-medium bg-[#1e1f22] hover:bg-[#35373c] text-[#dbdee1] border border-[#35373c] hover:border-[#5865F2]/50 transition">250k</button>
+              <button type="button" onclick="setLimitPreset(500000)" class="preset-btn px-2 py-0.5 rounded-lg text-[11px] font-medium bg-[#1e1f22] hover:bg-[#35373c] text-[#dbdee1] border border-[#35373c] hover:border-[#5865F2]/50 transition">500k</button>
+              <button type="button" onclick="setLimitAll()" class="preset-btn ml-auto px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-[#5865F2]/20 hover:bg-[#5865F2]/30 text-[#7983f5] border border-[#5865F2]/40 transition flex items-center gap-1 shadow-sm">
+                <i data-lucide="infinity" class="w-3 h-3"></i>
+                <span id="btnAllCachedLabel">All Cached</span>
+              </button>
             </div>
           </div>
 
           <!-- Confession Textarea -->
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-[#b5bac1] mb-1.5 flex items-center gap-1.5">
-              <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#949ba4]"></i> Confession to Find / Predict
-            </label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="confessionText" class="text-xs font-semibold uppercase tracking-wider text-[#b5bac1] flex items-center gap-1.5">
+                <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#5865F2]"></i> Confession to Predict
+              </label>
+              <span id="confessionWordCount" class="text-[11px] text-[#949ba4] font-mono">0 words</span>
+            </div>
             <textarea 
               id="confessionText" 
               name="confession" 
               rows="6"
-              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] rounded-xl p-3 text-sm text-white placeholder-[#80848e] transition outline-none resize-none scrollbar-thin leading-relaxed"
+              oninput="updateConfessionCount(this.value)"
+              class="w-full bg-[#1e1f22] border border-[#35373c] focus:border-[#5865F2] focus:ring-2 focus:ring-[#5865F2]/20 rounded-xl p-3.5 text-sm text-white placeholder-[#80848e] transition outline-none resize-none scrollbar-thin leading-relaxed"
               placeholder="Paste the anonymous confession message here..."
             ></textarea>
           </div>
@@ -955,6 +995,56 @@ Ts people should stop acting fake for real get a life 🤡`;
       });
     });
 
+    function onMessageLimitInput(val) {
+      const display = document.getElementById("limitDisplay");
+      if (!display) return;
+      if (!val || val === "0") {
+        display.textContent = "All Available Messages";
+        return;
+      }
+      const n = parseInt(val, 10);
+      if (isNaN(n) || n <= 0) {
+        display.textContent = "All Available Messages";
+      } else {
+        display.textContent = n.toLocaleString() + " messages";
+      }
+    }
+
+    function setLimitPreset(n) {
+      const input = document.getElementById("messageLimit");
+      if (input) {
+        input.value = n;
+        onMessageLimitInput(n);
+      }
+    }
+
+    function setLimitAll() {
+      const total = window.totalCachedMessages || 136267;
+      const input = document.getElementById("messageLimit");
+      if (input) {
+        input.value = total;
+        const display = document.getElementById("limitDisplay");
+        if (display) display.textContent = "All Cached (" + total.toLocaleString() + " msgs)";
+      }
+    }
+
+    function updateConfessionCount(text) {
+      const el = document.getElementById("confessionWordCount");
+      if (!el) return;
+      const trimmed = (text || "").trim();
+      const words = trimmed ? trimmed.split(/\s+/).length : 0;
+      el.textContent = `${words} words (${trimmed.length} chars)`;
+    }
+
+    function clearConfession() {
+      const txt = document.getElementById("confessionText");
+      if (txt) {
+        txt.value = "";
+        updateConfessionCount("");
+        txt.focus();
+      }
+    }
+
     function switchTab(tab) {
       const tabChat = document.getElementById("tabChatView");
       const tabAnalysis = document.getElementById("tabAnalysisView");
@@ -981,10 +1071,14 @@ Ts people should stop acting fake for real get a life 🤡`;
         const data = await res.json();
         const statusText = document.getElementById("statusText");
         if (data.cache_available && data.cached_info) {
+          window.totalCachedMessages = data.cached_info.total_messages;
           const totMsgs = data.cached_info.total_messages.toLocaleString();
           const totAuthors = data.cached_info.total_authors.toLocaleString();
           const tw = data.cached_info.time_window ? ` • ${data.cached_info.time_window}` : "";
-          statusText.textContent = `Cache: ${totMsgs} msgs (${totAuthors} authors)${tw}`;
+          statusText.textContent = `${totMsgs} msgs (${totAuthors} authors)`;
+          
+          const elAllBtn = document.getElementById("btnAllCachedLabel");
+          if (elAllBtn) elAllBtn.textContent = `All Cached (${totMsgs} msgs)`;
           
           const elChatStatusMsgs = document.getElementById("chatStatusMsgs");
           if (elChatStatusMsgs) elChatStatusMsgs.textContent = totMsgs;
@@ -1101,7 +1195,12 @@ Ts people should stop acting fake for real get a life 🤡`;
 
     async function runPrediction() {
       const channelId = document.getElementById("channelId").value.trim();
-      const limit = parseInt(document.getElementById("messageLimit").value) || 10000;
+      const rawLimit = document.getElementById("messageLimit").value.trim();
+      let limit = 0;
+      if (rawLimit && rawLimit !== "0") {
+        limit = parseInt(rawLimit, 10);
+        if (isNaN(limit) || limit < 0) limit = 0;
+      }
       const confession = document.getElementById("confessionText").value.trim();
       let token = document.getElementById("discordToken").value.trim();
       let geminiKey = document.getElementById("geminiApiKey").value.trim();

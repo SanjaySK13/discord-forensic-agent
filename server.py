@@ -181,8 +181,14 @@ def api_predict():
     global _JOB_PROGRESS
     data = request.json or {}
     channel_id = str(data.get("channel_id", "1516697578107043850")).strip()
-    limit = int(data.get("limit", 10000))
-    limit = max(50, min(100000, limit))
+    raw_limit = data.get("limit")
+    if raw_limit in [None, "", "all", 0, "0", -1, "-1"]:
+        limit = 0  # 0 represents all available messages
+    else:
+        try:
+            limit = max(50, int(raw_limit))
+        except (ValueError, TypeError):
+            limit = 10000
     confession = data.get("confession", "").strip()
     force_scrape = bool(data.get("force_scrape", False))
 
@@ -236,7 +242,7 @@ def api_predict():
 
             # 2. Backward sync: fetch older messages if requested limit exceeds cached count
             cached_count = corpus.get("metadata", {}).get("human_messages_kept", 0) if corpus else 0
-            if force_scrape or cached_count < limit:
+            if force_scrape or (limit > 0 and cached_count < limit):
                 before_id = None
                 if corpus and not force_scrape:
                     before_id = corpus.get("metadata", {}).get("oldest_message_id")

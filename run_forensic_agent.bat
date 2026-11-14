@@ -51,3 +51,4 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5000 ^| findstr LISTENING 2^
 echo [OK] Server and Discord bot successfully shut down.
 timeout /t 2 /nobreak >nul
 exit
+
